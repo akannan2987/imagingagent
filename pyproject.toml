@@ -72,6 +72,10 @@ pythonpath = ["src"]
 line-length = 100
 target-version = "py311"
 src = ["src", "tests"]
+# Markdown tutorials contain interactive-session snippets (things you type at
+# a Python prompt). They are transcripts, not source files, so the formatter
+# leaves them alone; source formatting is enforced on .py files as before.
+extend-exclude = ["*.md"]
 
 [tool.ruff.lint]
 # E/W = style, F = real errors (unused imports, undefined names),
