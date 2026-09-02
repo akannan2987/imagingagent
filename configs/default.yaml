@@ -1,0 +1,50 @@
+# configs/default.yaml — the one file that tells ImagingAgent what to do.
+#
+# Why a config file at all? Because every run must be reproducible. If a
+# number lives in a config file, the file can be committed alongside the run
+# that used it, and anyone can rerun the exact same thing later. Values not
+# listed here fall back to the defaults in src/imagingagent/config.py, so a
+# config can be as short as a single line.
+#
+# Override at run time:   imagingagent --config configs/default.yaml <command>
+# Or via environment:     IMAGINGAGENT_CONFIG=configs/default.yaml
+
+project_name: imagingagent
+
+paths:
+  # All paths are relative to the folder you run the command from (the repo
+  # root). They are written with forward slashes on every operating system;
+  # Python's pathlib converts them for Windows automatically.
+  raw: data/raw              # untouched downloads — the evidence locker, never edited
+  interim: data/interim      # intermediate results (preprocessed volumes)
+  processed: data/processed  # final tables and label maps
+  runs: runs                 # one folder per run + the run ledger
+  models: models             # trained model weights
+
+dataset:
+  name: msd_task04_hippocampus
+  modality: MRI
+  # Medical Segmentation Decathlon, Task 04 (Hippocampus), CC-BY-SA 4.0.
+  source_url: http://medicaldecathlon.com/
+  licence: CC-BY-SA 4.0
+  # When the real dataset is not present, generate a small synthetic stand-in
+  # so every command still runs. The synthetic data is labelled as such in
+  # every output it touches.
+  use_synthetic_fallback: true
+  synthetic_cases: 20
+  seed: 20260901
+
+audit:
+  # The decision this pipeline serves: how many cases can a human review?
+  # 0.10 means "flag at most the 10% least trustworthy cases for review".
+  review_budget_fraction: 0.10
+  # Plausibility bounds for a single adult hippocampus, in cubic millimetres.
+  # Generous on purpose; the learned score, not these bounds, does the fine work.
+  min_volume_mm3: 1000
+  max_volume_mm3: 6000
+
+storage:
+  # "local" writes to disk under base_dir. Other backends (object storage)
+  # plug in behind the same interface later without changing the pipeline.
+  backend: local
+  base_dir: .

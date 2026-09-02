@@ -1,0 +1,83 @@
+# pyproject.toml — the single source of truth for how this project is built,
+# installed, tested and linted. Every tool below reads its settings from here,
+# so there is one file to understand instead of five.
+
+[build-system]
+# setuptools turns the src/ folder into an installable package.
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imagingagent"
+version = "0.1.0"
+description = "A quantitative imaging pipeline built to be operated by an agent: ingest, segment or import, audit, report, serve."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Abhilash Kannan" }]
+requires-python = ">=3.11,<3.13"
+keywords = ["medical-imaging", "segmentation", "quality-control", "biomarkers", "mcp", "nifti", "dicom"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+
+# Runtime dependencies for Phase 0. Later phases add their own (nibabel,
+# SimpleITK, scikit-image, torch, monai, ...) as optional extras below, so the
+# skeleton stays light and installs in seconds on every operating system.
+dependencies = [
+    "pydantic>=2.7,<3",
+    "typer>=0.12,<1",
+    "PyYAML>=6,<7",
+    "numpy>=1.26,<3",
+]
+
+[project.optional-dependencies]
+# Tools needed to develop, test and lint — not needed to run the pipeline.
+dev = [
+    "pytest>=8,<10",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+# After `pip install -e .`, the command `imagingagent` exists on your PATH
+# and points at the Typer app defined in src/imagingagent/cli.py.
+imagingagent = "imagingagent.cli:app"
+
+[project.urls]
+Repository = "https://github.com/akannan2987/imagingagent"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+imagingagent = ["py.typed"]
+
+# ---------------------------------------------------------------------------
+# pytest — the test runner. `pytest` from the repo root finds tests/ on its own.
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q"
+pythonpath = ["src"]
+
+# ---------------------------------------------------------------------------
+# ruff — linter and formatter (a spell-checker for code style and common bugs).
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# E/W = style, F = real errors (unused imports, undefined names),
+# I = import ordering, B = common bug patterns, UP = modern syntax.
+select = ["E", "W", "F", "I", "B", "UP"]
+ignore = ["E501"]  # long lines are allowed in docstrings and comments
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]

@@ -1,0 +1,7 @@
+# Exact versions verified to install together on Python 3.11 for Windows,
+# macOS and Linux. `pip install -r requirements.txt` reproduces this environment.
+# Later phases extend this file; the pyproject.toml ranges stay the authority.
+pydantic==2.13.5
+typer==0.27.2
+PyYAML==6.0.3
+numpy==2.2.6
