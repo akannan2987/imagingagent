@@ -136,9 +136,14 @@ class LocalStorage(Storage):
 
     def append_text(self, key: str, text: str) -> None:
         # Local disk can append in place — cheaper than read + rewrite.
+        # newline="" switches off newline translation: without it, Windows
+        # silently turns every "\n" into "\r\n" on disk, while read_text
+        # (which goes through raw bytes) reads them back untranslated. With
+        # it, an appended file — like the run ledger — is byte-identical on
+        # every operating system, which a provenance record should be.
         path = self._path(key)
         path.parent.mkdir(parents=True, exist_ok=True)
-        with path.open("a", encoding="utf-8") as handle:
+        with path.open("a", encoding="utf-8", newline="") as handle:
             handle.write(text)
 
 
