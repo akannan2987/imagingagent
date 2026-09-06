@@ -32,6 +32,10 @@ models/**
 .env
 *.key
 
+# --- Private local notes and helper scripts, never tracked ---------------
+private/
+imagingagent-repo-snapshot.md
+
 # --- Editors and operating systems -------------------------------------------
 .vscode/
 .idea/
