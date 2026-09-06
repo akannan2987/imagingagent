@@ -20,11 +20,33 @@ All notable changes to ImagingAgent are recorded here. The format follows
 - 31 automated tests; lint and format checks with ruff.
 - Continuous integration on Windows, macOS and Linux runners.
 
-### Planned for 0.1.0
-- Phase 0b: full documentation set (README, glossary, per-OS setup,
-  architecture, git workflow, phase tutorials, roadmaps, contributing guide).
-- Phase 1: ingestion — real MRI volumes (Medical Segmentation Decathlon,
-  hippocampus task) with a synthetic fallback generator; NIfTI and DICOM
-  readers preserving geometry metadata; the case manifest.
+### Added — Phase 0b: documentation set for the two-track platform
+- `README.md`: two tracks (MRI volumes, digital pathology), one shared
+  audit layer; honest phase-by-phase status; data at a glance; honesty notes.
+- `docs/HANDBOOK.md`: the single live guide from day 0 to the finished
+  product, with stages, checkpoints and commit messages.
+- `docs/00-glossary.md` (both modalities), `docs/02-architecture.md`,
+  `docs/05-roadmap.md`, `docs/06-product-and-technology-roadmap.md`,
+  `docs/08-data-and-models.md`, `docs/TOOL_COOKBOOK.md`, `docs/UNINSTALL.md`,
+  six architecture decision records under `docs/adr/`.
+- Illustrations in `docs/img/`: cover, architecture, geometry (voxel vs
+  pixel), review-budget funnel.
+- Setup guides gain a "track extras" step; `CONTRIBUTING.md` gains the
+  symmetry, handbook and ADR rules.
+
+### Changed
+- Ruff no longer format-checks Markdown snippets or the git-ignored
+  `private/` folder.
+- `LocalStorage.append_text` writes with `newline=""` so the run ledger is
+  byte-identical on Windows (caught by CI).
+- CI actions bumped to `checkout@v5` / `setup-python@v6`.
+
+### Planned for 0.1.0 (end of Phase 3)
+- Phase 0c: two-track refactor — track configuration, `VolumeGeometry` and
+  `TileGeometry` contracts, modality registry, `--track` on every command.
+- Phase 1: ingestion for both tracks with public datasets and synthetic
+  generators.
+- Phase 2: preprocessing for both tracks.
+- Phase 3: segmentation for both tracks — classical, learned, imported.
 
 [Unreleased]: https://github.com/akannan2987/imagingagent/compare/master...develop

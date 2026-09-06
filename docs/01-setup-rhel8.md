@@ -1,4 +1,4 @@
-[← README](../README.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
+[← README](../README.md) · [Handbook](HANDBOOK.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
 
 # 01 — Setup on Red Hat Enterprise Linux 8 (or Rocky/Alma 8), from a blank VM
 
@@ -211,6 +211,28 @@ Python. `deactivate`, `rm -rf .venv`, redo Step 6 with `python3.11`.
 - **No GPU:** expected. The deep-learning phases run on CPU by design.
 - **Continuous integration** runs on Ubuntu, not RHEL 8; this page plus the
   later container phase are how RHEL 8 is covered.
+
+---
+
+## Step 8b — Installing a track's extra libraries (later phases)
+
+The core installs in seconds because imaging libraries are **optional
+extras**, installed only when a phase needs them. When a phase tutorial
+says "install the mri extras" (or pathology, or serve), run, with `.venv`
+active:
+
+```bash
+python -m pip install -r requirements-mri.txt          # NIfTI/DICOM, MONAI, PyTorch (CPU)
+python -m pip install -r requirements-pathology.txt    # slide readers, InstanSeg, embeddings, spatial
+python -m pip install -r requirements-serve.txt        # MCP server, review interface
+```
+
+These files arrive with Phase 1, pinned and verified on all three
+operating systems. `imagingagent doctor` then shows the libraries under
+their track heading. **RHEL 8 note:** the slide reader `openslide-bin`
+ships prebuilt binaries for glibc 2.28 and newer, which RHEL 8 provides —
+no system packages needed; `python3.11-devel` (Step 2) covers anything
+that compiles.
 
 ---
 

@@ -1,4 +1,4 @@
-[← README](../README.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
+[← README](../README.md) · [Handbook](HANDBOOK.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
 
 # 01 — Setup on Windows (10 or 11), from a blank machine
 
@@ -308,6 +308,27 @@ VS Code opens the folder. Bottom-right, click the Python version and select
 the interpreter at `.venv\Scripts\python.exe` so VS Code uses the same
 toolbox as your terminal. Press `` Ctrl+` `` to open VS Code's built-in
 terminal; it activates `.venv` automatically once the interpreter is set.
+
+---
+
+## Step 8b — Installing a track's extra libraries (later phases)
+
+The core installs in seconds because imaging libraries are **optional
+extras**, installed only when a phase needs them. When a phase tutorial
+says "install the mri extras" (or pathology, or serve), run, with `.venv`
+active:
+
+```powershell
+python -m pip install -r requirements-mri.txt          # NIfTI/DICOM, MONAI, PyTorch (CPU)
+python -m pip install -r requirements-pathology.txt    # slide readers, InstanSeg, embeddings, spatial
+python -m pip install -r requirements-serve.txt        # MCP server, review interface
+```
+
+These files arrive with Phase 1, pinned and verified on all three
+operating systems. `imagingagent doctor` then shows the libraries under
+their track heading. **PyTorch on Windows** installs its CPU build from
+the standard index; the pinned file names the exact wheel so no GPU
+drivers are involved.
 
 ---
 

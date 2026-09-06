@@ -1,4 +1,4 @@
-[← README](../README.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
+[← README](../README.md) · [Handbook](HANDBOOK.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
 
 # 01 — Setup on macOS (Intel or Apple Silicon), from a blank machine
 
@@ -223,6 +223,27 @@ code .
 
 Bottom-right, click the Python version and pick `.venv/bin/python`.
 `` Ctrl+` `` opens the built-in terminal with `.venv` active.
+
+---
+
+## Step 8b — Installing a track's extra libraries (later phases)
+
+The core installs in seconds because imaging libraries are **optional
+extras**, installed only when a phase needs them. When a phase tutorial
+says "install the mri extras" (or pathology, or serve), run, with `.venv`
+active:
+
+```bash
+python -m pip install -r requirements-mri.txt          # NIfTI/DICOM, MONAI, PyTorch (CPU)
+python -m pip install -r requirements-pathology.txt    # slide readers, InstanSeg, embeddings, spatial
+python -m pip install -r requirements-serve.txt        # MCP server, review interface
+```
+
+These files arrive with Phase 1, pinned and verified on all three
+operating systems. `imagingagent doctor` then shows the libraries under
+their track heading. On an Intel Mac PyTorch runs on CPU only; on Apple
+Silicon it can use the built-in accelerator (`--device mps`) but every
+tutorial's budget assumes CPU.
 
 ---
 

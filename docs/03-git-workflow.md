@@ -1,4 +1,4 @@
-[← README](../README.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
+[← README](../README.md) · [Handbook](HANDBOOK.md) · [All docs in order](../README.md#the-tutorial-in-order) · [Glossary](00-glossary.md)
 
 # 03 — The Git workflow: `master` / `beta` / `develop`
 

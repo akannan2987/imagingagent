@@ -20,6 +20,9 @@ on a laptop with no GPU.**
 > [`docs/00-glossary.md`](docs/00-glossary.md). If a word isn't there, that's
 > a documentation bug.
 
+> **New here? Start with the [Handbook](docs/HANDBOOK.md)** — one document that
+> walks the whole journey, day 0 to finished product, and links to everything else.
+
 > **Research use only.** Nothing here is a medical device and nothing here
 > makes clinical decisions. See [About the data](#about-the-data-honesty-notes).
 
@@ -247,6 +250,7 @@ learning goal, exact commands with expected output, and a checkpoint.
 
 | # | Document | What you learn |
 |---|---|---|
+| ★ | [`docs/HANDBOOK.md`](docs/HANDBOOK.md) | **start here** — the single live guide from day 0 to the finished product, linking to every document below |
 | — | [`docs/00-glossary.md`](docs/00-glossary.md) | every term, with an everyday analogy — open it in a second tab |
 | 1 | [`docs/01-setup-windows.md`](docs/01-setup-windows.md) · [`docs/01-setup-macos.md`](docs/01-setup-macos.md) · [`docs/01-setup-rhel8.md`](docs/01-setup-rhel8.md) | building your workshop: Python, Git, editor, GitHub, virtual environment, first passing tests |
 | 2 | [`docs/02-architecture.md`](docs/02-architecture.md) | what every box does, why it exists, how data flows — both tracks |
@@ -330,6 +334,7 @@ imagingagent/
 │   └── utils.py                       hashing, timestamps, identifiers
 ├── tests/                             one test file per module
 └── docs/
+    ├── HANDBOOK.md                    start here — the live end-to-end guide
     ├── 00-glossary.md                 every term, both modalities
     ├── 01-setup-{windows,macos,rhel8}.md
     ├── 02-architecture.md
@@ -337,10 +342,10 @@ imagingagent/
     ├── 04-phase-tutorials/            one file per phase
     ├── 05-roadmap.md                  this repository's next steps
     ├── 06-product-and-technology-roadmap.md
-    ├── 08-data-and-models.md
+    ├── 08-data-and-models.md          every dataset and model: source, licence, size, download
     ├── TOOL_COOKBOOK.md · UNINSTALL.md
-    ├── adr/                           architecture decision records
-    └── img/                           cover, architecture and concept illustrations
+    ├── adr/                           architecture decision records (six so far)
+    └── img/                           cover, architecture, geometry and audit illustrations
 ```
 
 Later phases add `src/imagingagent/tracks/mri/`, `tracks/pathology/`,

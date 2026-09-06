@@ -95,6 +95,40 @@ fix: reject absolute storage keys on Windows
 - **No personal data.** Only public, de-identified or synthetic images, and
   logs never contain anything that could identify a person.
 
+## The two-track rules
+
+ImagingAgent has two modality tracks (`mri`, `pathology`) on one shared
+foundation ([`docs/02-architecture.md`](docs/02-architecture.md),
+[ADR 0001](docs/adr/0001-two-tracks-one-platform.md)).
+
+- **Symmetry.** A capability phase (ingest, preprocess, segment, features,
+  audit, report, serve) delivers for both tracks in the same phase, with
+  the same command shape (`--track mri` / `--track pathology`), tests and
+  tutorial structure. Modality-specific phases belong to one track and say
+  so in their title. A track that falls behind is a bug in the plan.
+- **Track code lives under its track** (`src/imagingagent/tracks/<track>/`);
+  shared code never imports from a track. Optional dependencies are split
+  per track (`requirements-<track>.txt`, `pip install -e ".[<track>]"`).
+
+## The handbook rule
+
+[`docs/HANDBOOK.md`](docs/HANDBOOK.md) is the single live guide from day 0
+to the finished product. **Every phase commit updates it**: the stage's
+status mark and measured time, the link to the new tutorial, the version
+and date in its header. The same status change goes into
+[`docs/05-roadmap.md`](docs/05-roadmap.md) and the README's *Results,
+phase by phase* table. A fix between phases that changes a command or a
+path updates the handbook in the same commit. A handbook that lags the
+code is a bug.
+
+## Architecture decision records
+
+A design choice with alternatives (a library, a contract shape, a
+dependency boundary) gets a one-page record in [`docs/adr/`](docs/adr/README.md),
+numbered in sequence, listed in the index, and linked from the phase
+tutorial that made it. Records are never edited after acceptance; a change
+of mind is a new record that supersedes the old one.
+
 ## Reporting a problem
 
 Open a GitHub issue with: the command you ran, the full output, your

@@ -1,4 +1,4 @@
-[← README](../../README.md) · [All docs in order](../../README.md#the-tutorial-in-order) · [Glossary](../00-glossary.md)
+[← README](../../README.md) · [Handbook](../HANDBOOK.md) · [All docs in order](../../README.md#the-tutorial-in-order) · [Glossary](../00-glossary.md)
 
 # Phase 0 — The skeleton: a project that runs before it does anything
 
@@ -356,7 +356,7 @@ and hashing; a storage interface and why boundaries need guards; data
 contracts that publish schemas; an append-only ledger; a thin CLI;
 unit tests, linting, and continuous integration on three operating systems.
 
-Next: [`01-phase-1-ingestion.md`](01-phase-1-ingestion.md) — real MRI
+Next: [`01-ingestion.md`](01-ingestion.md) — real MRI
 volumes land, with a synthetic stand-in for offline runs.
 
 ---
