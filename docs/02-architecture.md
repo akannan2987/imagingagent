@@ -207,7 +207,7 @@ a feature of it.
 | Phase | Tutorial | Layer | Package location (when built) |
 |---|---|---|---|
 | 0 | [`04-phase-tutorials/00-phase-0-skeleton.md`](04-phase-tutorials/00-phase-0-skeleton.md) | foundation | `config.py` `storage.py` `schemas.py` `ledger.py` `cli.py` |
-| 0c | `04-phase-tutorials/00c-two-track-refactor.md` | foundation | `modality.py`, track configs, geometry contracts |
+| 0c | [`04-phase-tutorials/00c-two-track-refactor.md`](04-phase-tutorials/00c-two-track-refactor.md) | foundation | `modality.py`, track configs, geometry contracts |
 | 1 | `04-phase-tutorials/01-ingestion.md` | ingest | `tracks/mri/io.py`, `tracks/pathology/io.py`, `scripts/download_*.py`, `scripts/synth_*.py` |
 | 2 | `04-phase-tutorials/02-preprocessing.md` | preprocess | `tracks/*/preprocess.py` |
 | 3 | `04-phase-tutorials/03-segmentation.md` | segment / import | `tracks/*/segment.py`, `tracks/*/metrics.py` |

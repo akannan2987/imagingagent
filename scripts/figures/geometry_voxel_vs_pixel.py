@@ -1,0 +1,71 @@
+"""Writes docs/img/geometry_voxel_vs_pixel.svg. Edit the SVG text below and rerun."""
+
+from _svg import write_svg
+
+SVG = r"""
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="420" viewBox="0 0 1100 420" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14">
+  <rect width="1100" height="420" fill="#ffffff"/>
+  <text x="550" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Geometry: the note that turns pixels into millimetres</text>
+
+  <!-- LEFT: volume -->
+  <rect x="30" y="60" width="500" height="330" rx="14" fill="#eef4ff" stroke="#5b8def" stroke-width="2"/>
+  <text x="50" y="88" font-size="17" font-weight="700" fill="#2f5bb7">🧠 Volume (mri track) — VolumeGeometry</text>
+  <!-- stack of slices -->
+  <g stroke="#5b8def" stroke-width="2" fill="#dbe7ff">
+    <rect x="70" y="180" width="150" height="110" rx="6"/>
+    <rect x="85" y="160" width="150" height="110" rx="6"/>
+    <rect x="100" y="140" width="150" height="110" rx="6"/>
+    <rect x="115" y="120" width="150" height="110" rx="6"/>
+  </g>
+  <!-- one voxel cube -->
+  <g stroke="#1e3a8a" stroke-width="2" fill="#fbbf24">
+    <rect x="150" y="160" width="24" height="24"/>
+    <polygon points="150,160 158,152 182,152 174,160"/>
+    <polygon points="174,160 182,152 182,176 174,184"/>
+  </g>
+  <text x="188" y="158" font-size="12" fill="#1e3a8a">one voxel</text>
+  <!-- axes -->
+  <g stroke="#475569" stroke-width="2">
+    <line x1="300" y1="300" x2="360" y2="300"/><line x1="300" y1="300" x2="300" y2="240"/><line x1="300" y1="300" x2="335" y2="265"/>
+  </g>
+  <g font-size="12" fill="#475569"><text x="364" y="304">R (right)</text><text x="292" y="232">S (up)</text><text x="338" y="262">A (front)</text></g>
+  <g font-size="13" fill="#1e293b">
+    <text x="300" y="120" font-weight="600">spacing_mm</text><text x="300" y="138">e.g. 1.0 × 1.0 × 1.2 mm per voxel</text>
+    <text x="300" y="166" font-weight="600">orientation</text><text x="300" y="184">e.g. RAS — which way is right, front, up</text>
+    <text x="300" y="212" font-weight="600">origin</text><text x="300" y="230">where voxel (0,0,0) sits in the scanner</text>
+  </g>
+  <text x="50" y="330" font-size="13" fill="#334155">Volume = count of voxels × (1.0 × 1.0 × 1.2) mm³.</text>
+  <text x="50" y="350" font-size="13" fill="#334155">Wrong spacing → every volume wrong by the same factor.</text>
+  <text x="50" y="372" font-size="12" fill="#64748b">Stored in the NIfTI affine / DICOM headers.</text>
+
+  <!-- RIGHT: slide -->
+  <rect x="570" y="60" width="500" height="330" rx="14" fill="#fdf0f5" stroke="#c2417b" stroke-width="2"/>
+  <text x="590" y="88" font-size="17" font-weight="700" fill="#9c2f62">🔬 Slide (pathology track) — TileGeometry</text>
+  <!-- slide -->
+  <rect x="600" y="110" width="260" height="170" rx="6" fill="#fde2ea" stroke="#c2417b" stroke-width="2"/>
+  <ellipse cx="730" cy="195" rx="95" ry="60" fill="#f5b8cf" opacity="0.8"/>
+  <!-- tile -->
+  <rect x="700" y="160" width="60" height="60" fill="none" stroke="#1a7f37" stroke-width="3"/>
+  <text x="768" y="164" font-size="12" fill="#166534">one tile</text>
+  <!-- pixel -->
+  <rect x="712" y="172" width="8" height="8" fill="#fbbf24" stroke="#92400e"/>
+  <text x="724" y="178" font-size="11" fill="#92400e">one pixel</text>
+  <!-- offset arrows -->
+  <g stroke="#475569" stroke-width="1.5" stroke-dasharray="4 3">
+    <line x1="600" y1="160" x2="700" y2="160"/><line x1="700" y1="110" x2="700" y2="160"/>
+  </g>
+  <text x="620" y="152" font-size="11" fill="#475569">tile_x</text><text x="704" y="135" font-size="11" fill="#475569">tile_y</text>
+  <g font-size="13" fill="#1e293b">
+    <text x="880" y="120" font-weight="600">microns_per_pixel</text><text x="880" y="138">e.g. 0.25 µm (40×)</text>
+    <text x="880" y="166" font-weight="600">level</text><text x="880" y="184">which pyramid zoom</text>
+    <text x="880" y="212" font-weight="600">tile_x, tile_y</text><text x="880" y="230">offset on the slide</text>
+    <text x="880" y="258" font-weight="600">channels · stain</text><text x="880" y="276">H&amp;E, DAB, or DAPI+CD8+…</text>
+  </g>
+  <text x="590" y="316" font-size="13" fill="#334155">Cell area = pixel count × (0.25 µm)². Cell density = cells / (tile area in mm²).</text>
+  <text x="590" y="336" font-size="13" fill="#334155">Wrong µm/px → every area and density wrong; "20×" vs "40×" is a 4× area error.</text>
+  <text x="590" y="372" font-size="12" fill="#64748b">Stored in TIFF/OME-TIFF tags, slide-scanner metadata, or the dataset's documentation.</text>
+</svg>
+"""
+
+if __name__ == "__main__":
+    write_svg("geometry_voxel_vs_pixel", SVG)

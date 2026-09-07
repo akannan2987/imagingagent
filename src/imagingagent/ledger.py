@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from . import __version__
 from .config import ProjectConfig
-from .schemas import RunRecord
+from .schemas import RunRecord, Track
 from .storage import Storage
 from .utils import platform_summary, short_id, utc_now_iso
 
@@ -27,8 +27,18 @@ class RunLedger:
         self.storage = storage
         self.key = key
 
-    def start(self, command: str, config: ProjectConfig, notes: str = "") -> RunRecord:
-        """Create a run record, write its 'started' line, and return it."""
+    def start(
+        self,
+        command: str,
+        config: ProjectConfig,
+        notes: str = "",
+        track: Track | str = Track.SHARED,
+    ) -> RunRecord:
+        """Create a run record, write its 'started' line, and return it.
+
+        ``track`` records which modality family the run served, so the
+        ledger can be filtered per track (``imagingagent ledger list --track mri``).
+        """
         record = RunRecord(
             run_id=short_id(),
             started_at=utc_now_iso(),
@@ -36,6 +46,7 @@ class RunLedger:
             config_hash=config.content_hash(),
             package_version=__version__,
             platform=platform_summary(),
+            track=Track(track),
             notes=notes,
         )
         self._append(record)

@@ -4,7 +4,8 @@
 # number lives in a config file, the file can be committed alongside the run
 # that used it, and anyone can rerun the exact same thing later. Values not
 # listed here fall back to the defaults in src/imagingagent/config.py, so a
-# config can be as short as a single line.
+# config can be as short as a single line. A test keeps this file and the
+# code defaults identical.
 #
 # Override at run time:   imagingagent --config configs/default.yaml <command>
 # Or via environment:     IMAGINGAGENT_CONFIG=configs/default.yaml
@@ -13,35 +14,86 @@ project_name: imagingagent
 
 paths:
   # All paths are relative to the folder you run the command from (the repo
-  # root). They are written with forward slashes on every operating system;
-  # Python's pathlib converts them for Windows automatically.
+  # root). Written with forward slashes on every operating system; Python's
+  # pathlib converts them for Windows automatically.
   raw: data/raw              # untouched downloads — the evidence locker, never edited
-  interim: data/interim      # intermediate results (preprocessed volumes)
+  interim: data/interim      # intermediate results (preprocessed volumes, tiles)
   processed: data/processed  # final tables and label maps
   runs: runs                 # one folder per run + the run ledger
   models: models             # trained model weights
 
-dataset:
-  name: msd_task04_hippocampus
-  modality: MRI
-  # Medical Segmentation Decathlon, Task 04 (Hippocampus), CC-BY-SA 4.0.
-  source_url: http://medicaldecathlon.com/
-  licence: CC-BY-SA 4.0
-  # When the real dataset is not present, generate a small synthetic stand-in
-  # so every command still runs. The synthetic data is labelled as such in
-  # every output it touches.
-  use_synthetic_fallback: true
-  synthetic_cases: 20
-  seed: 20260901
+# ---------------------------------------------------------------------------
+# tracks — the two modality families. Each can be switched off; a command
+# run with --track <name> refuses if that track is disabled.
+# ---------------------------------------------------------------------------
+tracks:
+  mri:
+    enabled: true
+    dataset:
+      name: msd_task04_hippocampus
+      modality: MRI
+      # Medical Segmentation Decathlon, Task 04 (Hippocampus), CC-BY-SA 4.0.
+      source_url: http://medicaldecathlon.com/
+      licence: CC-BY-SA 4.0
+      # When the real dataset is absent, generate a small synthetic stand-in so
+      # every command still runs. Labelled synthetic in every output it touches.
+      use_synthetic_fallback: true
+      synthetic_cases: 20
+      seed: 20260901
+    # Common ground for every volume: resample to this voxel size (mm).
+    target_spacing_mm: [1.0, 1.0, 1.0]
 
+  pathology:
+    enabled: true
+    # One entry per dataset role; each is switched on or off individually.
+    datasets:
+      - name: kather2016
+        role: tissue          # tissue-type tiles (8 classes)
+        source_url: https://zenodo.org/records/53169
+        licence: CC-BY 4.0
+        enabled: true
+      - name: pannuke
+        role: nuclei          # nucleus instances + types (one fold)
+        source_url: https://warwick.ac.uk/fac/cross_fac/tia/data/pannuke
+        licence: CC-BY-NC-SA 4.0
+        enabled: true
+      - name: deepliif
+        role: ihc             # IHC paired with multiplex IF
+        source_url: https://zenodo.org/records/4751737
+        licence: recorded at download
+        enabled: true
+      - name: mcmicro_exemplar001
+        role: mif             # multiplex immunofluorescence (CyCIF)
+        source_url: https://mcmicro.org/
+        licence: recorded at download
+        enabled: true
+      - name: visium_hne
+        role: spatial         # spatial transcriptomics + H&E
+        source_url: https://squidpy.readthedocs.io/
+        licence: recorded at download
+        enabled: true
+    # Common ground for every tile: resample to this resolution (microns per pixel).
+    target_microns_per_pixel: 0.5
+    use_synthetic_fallback: true
+    synthetic_tiles: 40
+    seed: 20260904
+
+# ---------------------------------------------------------------------------
+# audit — the decision this pipeline serves, plus per-track plausibility rules.
+# ---------------------------------------------------------------------------
 audit:
-  # The decision this pipeline serves: how many cases can a human review?
-  # 0.10 means "flag at most the 10% least trustworthy cases for review".
+  # How many cases can a human review? 0.10 = flag at most the 10% least
+  # trustworthy cases. Shared by both tracks.
   review_budget_fraction: 0.10
-  # Plausibility bounds for a single adult hippocampus, in cubic millimetres.
-  # Generous on purpose; the learned score, not these bounds, does the fine work.
-  min_volume_mm3: 1000
-  max_volume_mm3: 6000
+  mri:
+    # Plausibility bounds for a single adult hippocampus, in cubic millimetres.
+    # Generous on purpose; the learned score, not these bounds, does the fine work.
+    min_volume_mm3: 1000
+    max_volume_mm3: 6000
+  pathology:
+    # Plausibility bounds on nuclei per square millimetre of tissue.
+    min_nuclei_per_mm2: 50
+    max_nuclei_per_mm2: 20000
 
 storage:
   # "local" writes to disk under base_dir. Other backends (object storage)

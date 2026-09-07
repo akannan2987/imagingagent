@@ -1,4 +1,4 @@
-[← README](../README.md) · [All docs in order](../README.md#the-tutorial-in-order)
+[← README](../README.md) · [Handbook](HANDBOOK.md) · [All docs in order](../README.md#the-tutorial-in-order)
 
 # 00 — Glossary: every term, in plain language
 
@@ -523,6 +523,30 @@ so they can be versioned. *The dials on the machine, written down.*
 **Schema / data contract** — the declared shape of a piece of data: fields,
 types, allowed ranges. **JSON Schema** is a machine-readable description of
 one. *A customs form.* **pydantic** is the library that enforces them.
+
+**Track configuration** — the `tracks:` block of the config: one entry per
+modality family, each switchable on or off, each with its own datasets and
+resampling target. *Two thermostats in one house.*
+
+**Modality registry** — the lookup table in `modality.py` of every kind of
+image the platform knows, marked implemented or planned; what
+`imagingagent modalities` prints. *A menu that also lists "coming soon".*
+
+**Discriminated union** — a field that can hold one of several shapes,
+with a tag (`kind`) saying which. Geometry is one: `volume` or `tile`.
+*An envelope labelled "photo" or "letter" so you know how to open it.*
+
+**Validator** — a rule that runs when a record is created and rejects it
+if fields disagree (an H&E case on the `mri` track). *The customs officer
+who reads the form.*
+
+**Extras** — optional groups of libraries declared in `pyproject.toml`
+(`mri`, `pathology`, `serve`) so the core installs light and each track
+adds its own. *Buying the lens kit only when you need the lens.*
+
+**Lock file** — the complete frozen list of every library and version in
+an environment, so installs are identical anywhere. *The recipe's brand
+and batch numbers, not just the ingredients.*
 
 **Storage abstraction** — one interface for reading and writing files, with
 swappable backends (local disk now, cloud buckets later). *A universal

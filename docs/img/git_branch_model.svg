@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="420" viewBox="0 0 1100 420" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker>
+  </defs>
+  <rect width="1100" height="420" fill="#ffffff"/>
+  <text x="550" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Three branches, one direction of travel</text>
+
+  <!-- lanes -->
+  <g font-weight="700" font-size="15">
+    <rect x="30" y="70" width="1040" height="70" rx="12" fill="#eefbf1" stroke="#1a7f37" stroke-width="2"/>
+    <text x="50" y="98" fill="#166534">master</text><text x="50" y="118" font-weight="400" font-size="12" fill="#166534">released — anyone can clone and run; tags live here</text>
+    <rect x="30" y="160" width="1040" height="70" rx="12" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
+    <text x="50" y="188" fill="#92400e">beta</text><text x="50" y="208" font-weight="400" font-size="12" fill="#92400e">finished phases, pre-release</text>
+    <rect x="30" y="250" width="1040" height="70" rx="12" fill="#eef4ff" stroke="#5b8def" stroke-width="2"/>
+    <text x="50" y="278" fill="#2f5bb7">develop</text><text x="50" y="298" font-weight="400" font-size="12" fill="#2f5bb7">daily work — the only branch you commit on</text>
+  </g>
+
+  <!-- commits on develop -->
+  <g fill="#5b8def" stroke="#1e3a8a" stroke-width="2">
+    <circle cx="420" cy="285" r="9"/><circle cx="500" cy="285" r="9"/><circle cx="580" cy="285" r="9"/><circle cx="660" cy="285" r="9"/><circle cx="740" cy="285" r="9"/>
+  </g>
+  <line x1="420" y1="285" x2="740" y2="285" stroke="#1e3a8a" stroke-width="2"/>
+  <text x="580" y="312" text-anchor="middle" font-size="12" fill="#1e3a8a">commit as often as you like while building a phase</text>
+
+  <!-- end-of-phase push -->
+  <g stroke="#475569" stroke-width="2.5" marker-end="url(#a)">
+    <line x1="740" y1="272" x2="900" y2="207"/>
+    <line x1="740" y1="272" x2="900" y2="117"/>
+  </g>
+  <g fill="#f59e0b" stroke="#92400e" stroke-width="2"><circle cx="905" cy="195" r="9"/></g>
+  <g fill="#1a7f37" stroke="#166534" stroke-width="2"><circle cx="905" cy="105" r="9"/></g>
+  <text x="925" y="199" font-size="12" fill="#92400e">develop:beta</text>
+  <text x="925" y="109" font-size="12" fill="#166534">develop:master</text>
+  <text x="820" y="255" font-size="12" font-weight="600" fill="#334155">end of phase: one push updates all three</text>
+
+  <!-- the block -->
+  <rect x="30" y="340" width="1040" height="66" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+  <g font-family="Menlo, Consolas, monospace" font-size="12" fill="#0f172a">
+    <text x="45" y="360">git switch develop  →  git add -A  →  git commit -m "phase-N: …"  →  git push origin develop develop:beta develop:master</text>
+    <text x="45" y="380">git switch master  →  git pull --ff-only origin master  →  git switch develop        (add --tags only when a release tag was created)</text>
+    <text x="45" y="398" fill="#64748b">Fast-forward only: beta and master never receive anything except what develop already has. No merges, no force-pushes.</text>
+  </g>
+</svg>

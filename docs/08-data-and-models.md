@@ -14,6 +14,8 @@ at download* are filled in, with checksums, when Phase 1 first fetches
 each dataset. Nothing here is guessed: each entry states what was verified
 and when.
 
+![Datasets map](img/datasets_map.svg)
+
 ## Rules that apply to every dataset
 
 1. **Raw downloads are never edited.** They land in `data/raw/<name>/`

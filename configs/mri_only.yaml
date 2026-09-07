@@ -1,0 +1,8 @@
+# configs/mri_only.yaml — example: run only the volumetric track.
+#
+# Everything not listed here keeps its default from configs/default.yaml.
+# Any --track pathology command refuses with a clear message while this
+# config is active; --track mri behaves exactly as before.
+tracks:
+  pathology:
+    enabled: false

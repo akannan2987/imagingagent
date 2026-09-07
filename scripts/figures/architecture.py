@@ -1,0 +1,100 @@
+"""Writes docs/img/architecture.svg. Edit the SVG text below and rerun."""
+
+from _svg import write_svg
+
+SVG = r"""
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="640" fill="#ffffff"/>
+
+  <!-- title -->
+  <text x="600" y="36" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">ImagingAgent — two tracks, one shared spine, one audit layer</text>
+
+  <!-- MRI track band -->
+  <rect x="30" y="60" width="760" height="150" rx="14" fill="#eef4ff" stroke="#5b8def" stroke-width="2"/>
+  <text x="50" y="88" font-size="18" font-weight="700" fill="#2f5bb7">🧠 mri track — volumes</text>
+  <g fill="#ffffff" stroke="#5b8def" stroke-width="1.5">
+    <rect x="50" y="105" width="130" height="80" rx="10"/>
+    <rect x="200" y="105" width="130" height="80" rx="10"/>
+    <rect x="350" y="105" width="130" height="80" rx="10"/>
+    <rect x="500" y="105" width="130" height="80" rx="10"/>
+    <rect x="650" y="105" width="120" height="80" rx="10"/>
+  </g>
+  <g fill="#1e293b" text-anchor="middle">
+    <text x="115" y="135" font-weight="600">Ingest</text><text x="115" y="155" font-size="12">NIfTI · DICOM</text><text x="115" y="171" font-size="12">geometry kept</text>
+    <text x="265" y="135" font-weight="600">Preprocess</text><text x="265" y="155" font-size="12">resample · normalise</text><text x="265" y="171" font-size="12">denoise · register</text>
+    <text x="415" y="135" font-weight="600">Segment</text><text x="415" y="155" font-size="12">classical · 3D U-Net</text><text x="415" y="171" font-size="12">or import a mask</text>
+    <text x="565" y="135" font-weight="600">Uncertainty</text><text x="565" y="155" font-size="12">TTA · MC-dropout</text><text x="565" y="171" font-size="12">repeatability · MDD</text>
+    <text x="710" y="135" font-weight="600">Biomarkers</text><text x="710" y="155" font-size="12">volume · shape</text><text x="710" y="171" font-size="12">with CIs</text>
+  </g>
+  <g stroke="#475569" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="180" y1="145" x2="198" y2="145"/><line x1="330" y1="145" x2="348" y2="145"/>
+    <line x1="480" y1="145" x2="498" y2="145"/><line x1="630" y1="145" x2="648" y2="145"/>
+  </g>
+
+  <!-- Pathology track band -->
+  <rect x="30" y="230" width="760" height="150" rx="14" fill="#fdf0f5" stroke="#c2417b" stroke-width="2"/>
+  <text x="50" y="258" font-size="18" font-weight="700" fill="#9c2f62">🔬 pathology track — slides</text>
+  <g fill="#ffffff" stroke="#c2417b" stroke-width="1.5">
+    <rect x="50" y="275" width="130" height="80" rx="10"/>
+    <rect x="200" y="275" width="130" height="80" rx="10"/>
+    <rect x="350" y="275" width="130" height="80" rx="10"/>
+    <rect x="500" y="275" width="130" height="80" rx="10"/>
+    <rect x="650" y="275" width="120" height="80" rx="10"/>
+  </g>
+  <g fill="#1e293b" text-anchor="middle">
+    <text x="115" y="305" font-weight="600">Ingest</text><text x="115" y="325" font-size="12">H&amp;E · IHC · mIF</text><text x="115" y="341" font-size="12">spatial transcriptomics</text>
+    <text x="265" y="305" font-weight="600">Preprocess</text><text x="265" y="325" font-size="12">stain separation</text><text x="265" y="341" font-size="12">normalise · tile</text>
+    <text x="415" y="305" font-weight="600">Segment</text><text x="415" y="325" font-size="12">classical · InstanSeg</text><text x="415" y="341" font-size="12">or import a mask</text>
+    <text x="565" y="305" font-weight="600">Embed &amp; analyse</text><text x="565" y="325" font-size="12">foundation models</text><text x="565" y="341" font-size="12">cell graphs · spatial</text>
+    <text x="710" y="305" font-weight="600">Biomarkers</text><text x="710" y="325" font-size="12">density · composition</text><text x="710" y="341" font-size="12">with CIs</text>
+  </g>
+  <g stroke="#475569" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="180" y1="315" x2="198" y2="315"/><line x1="330" y1="315" x2="348" y2="315"/>
+    <line x1="480" y1="315" x2="498" y2="315"/><line x1="630" y1="315" x2="648" y2="315"/>
+  </g>
+
+  <!-- Shared right column -->
+  <rect x="820" y="60" width="350" height="320" rx="14" fill="#eefbf1" stroke="#1a7f37" stroke-width="2"/>
+  <text x="840" y="88" font-size="18" font-weight="700" fill="#166534">🛡️ shared — built once</text>
+  <g fill="#ffffff" stroke="#1a7f37" stroke-width="1.5">
+    <rect x="840" y="105" width="310" height="60" rx="10"/>
+    <rect x="840" y="175" width="310" height="60" rx="10"/>
+    <rect x="840" y="245" width="310" height="60" rx="10"/>
+    <rect x="840" y="315" width="310" height="50" rx="10"/>
+  </g>
+  <g fill="#1e293b">
+    <text x="855" y="130" font-weight="600">Audit &amp; triage</text><text x="855" y="150" font-size="12">trust score · review queue · budget</text>
+    <text x="855" y="200" font-weight="600">Benchmark harness</text><text x="855" y="220" font-size="12">every metric → run ledger</text>
+    <text x="855" y="270" font-weight="600">Report writer</text><text x="855" y="290" font-size="12">structured findings · plain language</text>
+    <text x="855" y="340" font-weight="600">Serve</text><text x="855" y="357" font-size="12">CLI · MCP server · review interface</text>
+  </g>
+  <g stroke="#475569" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="770" y1="145" x2="838" y2="135"/>
+    <line x1="770" y1="315" x2="838" y2="140"/>
+  </g>
+
+  <!-- Foundation bar -->
+  <rect x="30" y="410" width="1140" height="70" rx="14" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="600" y="437" text-anchor="middle" font-size="17" font-weight="700" fill="#334155">Foundation (Phase 0) — config → storage → data contracts → run ledger → command line</text>
+  <text x="600" y="462" text-anchor="middle" font-size="13" fill="#475569">Every layer above reads settings from config, moves bytes through the storage interface, exchanges typed contracts, and logs to the ledger. Nothing is forked per track.</text>
+
+  <!-- Legend / rule -->
+  <g font-size="13" fill="#475569">
+    <text x="30" y="515" font-weight="600" fill="#0f172a">The one rule:</text>
+    <text x="130" y="515">data flows left → right and top → down; no step edits its own input — delete everything but raw data and code, rerun, get identical results.</text>
+    <text x="30" y="545" font-weight="600" fill="#0f172a">Three doors into Segment:</text>
+    <text x="220" y="545">an interpretable classical method, a learned model, or a label map exported from any other tool (QuPath, 3D Slicer, FSL, FreeSurfer). Same contract, same audit.</text>
+    <text x="30" y="575" font-weight="600" fill="#0f172a">Modality-specific:</text>
+    <text x="170" y="575">uncertainty &amp; repeatability (mri); foundation-model benchmark, spatial statistics, graph learning, multi-modal joins (pathology). Everything else is shared.</text>
+    <text x="30" y="610" fill="#94a3b8">docs/img/architecture.svg · regenerate by editing this file; see docs/02-architecture.md for the walkthrough</text>
+  </g>
+</svg>
+"""
+
+if __name__ == "__main__":
+    write_svg("architecture", SVG)

@@ -37,14 +37,15 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-          cache-dependency-path: |
-            requirements.txt
-            requirements-dev.txt
+          cache-dependency-path: requirements.lock
 
-      - name: Install the package and development tools
+      - name: Install the exact locked environment, then the package
+        # requirements.lock is the full frozen dependency tree (see ADR 0007).
+        # Installing from it on three operating systems is what proves the
+        # lock is portable. The package itself is installed editable on top.
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements-dev.txt
+          python -m pip install -r requirements.lock
           python -m pip install -e .
 
       - name: Lint (ruff check)

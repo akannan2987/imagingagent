@@ -13,6 +13,8 @@ RHEL 8 Linux use [`01-setup-rhel8.md`](01-setup-rhel8.md).
 
 ---
 
+![Setup flow](img/setup_flow.svg)
+
 ## How to read this page
 
 Every step has the same shape: **what** to do, **how** (the exact command),
@@ -283,7 +285,7 @@ created  data/raw
 ...
 ledger   runs/ledger.jsonl (run 3f2a9c1d7e0b)
 ...............................                                          [100%]
-31 passed in 0.2s
+53 passed in 0.2s
 ```
 
 The optional libraries listed as `not installed` are expected: each later
@@ -355,7 +357,7 @@ You can tick all of these:
 - [ ] `git --version` prints a version, and `git config user.name` prints your name
 - [ ] the prompt shows `(.venv)` after activation
 - [ ] `imagingagent doctor --config configs/default.yaml` ends with `result       : healthy`
-- [ ] `pytest` ends with `31 passed`
+- [ ] `pytest` ends with `53 passed`
 
 Next: [`03-git-workflow.md`](03-git-workflow.md) — putting the code under
 version control with the `master` / `beta` / `develop` model, then

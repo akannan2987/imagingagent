@@ -121,6 +121,31 @@ phase by phase* table. A fix between phases that changes a command or a
 path updates the handbook in the same commit. A handbook that lags the
 code is a bug.
 
+## Dependencies and the lock file
+
+Direct dependencies live in `pyproject.toml` (ranges) and `requirements*.txt`
+(pins). `requirements.lock` is the full frozen tree of the core plus the
+development tools, and CI installs from it on all three operating systems
+([ADR 0007](docs/adr/0007-lock-file-and-per-track-dependencies.md)). **Any
+change to `requirements*.txt` regenerates the lock in the same commit**, in a
+clean virtual environment:
+
+```bash
+python -m pip freeze --exclude-editable > requirements.lock
+```
+
+Track-specific libraries go in `requirements-<track>.txt` and the matching
+extra in `pyproject.toml`, never in the core.
+
+## Illustrations
+
+Every figure under `docs/img/` is written by a script in `scripts/figures/`
+and regenerated with `python scripts/figures/all.py`. Never add an image
+file by hand: scripts can be edited as text, carry no hidden metadata, and
+from Phase 3 on are rebuilt from the run that produced their numbers.
+**Every phase tutorial carries at least one diagram** (an SVG from
+`scripts/figures/` or an inline Mermaid block).
+
 ## Architecture decision records
 
 A design choice with alternatives (a library, a contract shape, a

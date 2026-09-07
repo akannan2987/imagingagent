@@ -33,7 +33,7 @@ def test_yaml_override(tmp_path: Path) -> None:
     cfg = load_config(yaml_path)
     assert cfg.audit.review_budget_fraction == pytest.approx(0.25)
     # Everything not mentioned keeps its default.
-    assert cfg.dataset.name == "msd_task04_hippocampus"
+    assert cfg.tracks.mri.dataset.name == "msd_task04_hippocampus"
 
 
 def test_environment_variable_is_honoured(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -70,3 +70,49 @@ def test_hash_is_stable_and_sensitive() -> None:
     assert a.content_hash() == b.content_hash()
     assert a.content_hash() != c.content_hash()
     assert len(a.content_hash()) == 64
+
+
+# --- Phase 0c: tracks ---------------------------------------------------------
+
+
+def test_both_tracks_enabled_by_default() -> None:
+    cfg = ProjectConfig()
+    assert cfg.tracks.enabled_names() == ["mri", "pathology"]
+    assert cfg.tracks.pathology.dataset("nuclei").name == "pannuke"
+    assert cfg.tracks.pathology.dataset("spatial").licence == "recorded at download"
+
+
+def test_disabling_a_track_is_honoured(tmp_path: Path) -> None:
+    yaml_path = tmp_path / "mri_only.yaml"
+    yaml_path.write_text("tracks:\n  pathology:\n    enabled: false\n", encoding="utf-8")
+    cfg = load_config(yaml_path)
+    assert cfg.tracks.enabled_names() == ["mri"]
+    with pytest.raises(ValueError, match="disabled"):
+        cfg.require_track("pathology")
+    assert cfg.require_track("mri").enabled
+
+
+def test_unknown_track_fails_loudly() -> None:
+    with pytest.raises(KeyError, match="Unknown track"):
+        ProjectConfig().tracks.get("ultrasound")
+
+
+def test_disabling_one_pathology_dataset(tmp_path: Path) -> None:
+    """A dataset entry can be switched off without touching the others."""
+    yaml_path = tmp_path / "no_pannuke.yaml"
+    yaml_path.write_text(
+        "tracks:\n  pathology:\n    datasets:\n"
+        "      - {name: kather2016, role: tissue}\n"
+        "      - {name: pannuke, role: nuclei, enabled: false}\n",
+        encoding="utf-8",
+    )
+    cfg = load_config(yaml_path)
+    assert cfg.tracks.pathology.dataset("tissue").name == "kather2016"
+    assert cfg.tracks.pathology.dataset("nuclei") is None
+
+
+def test_track_specific_audit_bounds_validate(tmp_path: Path) -> None:
+    yaml_path = tmp_path / "bad_audit.yaml"
+    yaml_path.write_text("audit:\n  pathology:\n    max_nuclei_per_mm2: 0\n", encoding="utf-8")
+    with pytest.raises(ValidationError):
+        load_config(yaml_path)

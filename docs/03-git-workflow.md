@@ -13,6 +13,8 @@ marked.
 
 ---
 
+![Branch model](img/git_branch_model.svg)
+
 ## Four words, with a picture
 
 - A **repository** ("repo") is a folder whose history Git tracks. The

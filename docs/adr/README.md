@@ -21,6 +21,7 @@ supersedes the old one.
 | [0004](0004-cpu-first.md) | CPU-first design with a documented GPU path | accepted |
 | [0005](0005-instanseg-for-nuclei.md) | InstanSeg as the pre-trained nucleus/cell model | accepted |
 | [0006](0006-phikon-as-default-foundation-model.md) | Phikon (ViT-B) as the default pathology foundation model | accepted |
+| [0007](0007-lock-file-and-per-track-dependencies.md) | A lock file for the core, per-track requirement files for the rest; no R environment | accepted |
 
 New records are added by the phase that makes the decision and listed in
 the phase's tutorial.

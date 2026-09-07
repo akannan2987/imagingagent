@@ -13,6 +13,8 @@ Windows users: [`01-setup-windows.md`](01-setup-windows.md). RHEL 8:
 
 ---
 
+![Setup flow](img/setup_flow.svg)
+
 ## How to read this page
 
 Every step: **what**, **how** (exact command), **why**, **what success looks
@@ -205,7 +207,7 @@ created  data/raw
 ...
 ledger   runs/ledger.jsonl (run 3f2a9c1d7e0b)
 ...............................                                          [100%]
-31 passed in 0.2s
+53 passed in 0.2s
 ```
 
 Optional libraries `not installed` are expected — each phase adds its own.
@@ -266,7 +268,7 @@ pytest
 - [ ] `git --version` works and `git config user.name` prints your name
 - [ ] prompt shows `(.venv)` after activation
 - [ ] `imagingagent doctor --config configs/default.yaml` ends with `result       : healthy`
-- [ ] `pytest` ends with `31 passed`
+- [ ] `pytest` ends with `53 passed`
 
 Next: [`03-git-workflow.md`](03-git-workflow.md), then
 [`04-phase-tutorials/00-phase-0-skeleton.md`](04-phase-tutorials/00-phase-0-skeleton.md).

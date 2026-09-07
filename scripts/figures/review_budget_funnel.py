@@ -1,0 +1,77 @@
+"""Writes docs/img/review_budget_funnel.svg. Edit the SVG text below and rerun."""
+
+from _svg import write_svg
+
+SVG = r"""
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="440" viewBox="0 0 1100 440" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker>
+  </defs>
+  <rect width="1100" height="440" fill="#ffffff"/>
+  <text x="550" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">The audit layer: from 200 cases to the 14 that need a human</text>
+
+  <!-- Step 1: all cases -->
+  <rect x="30" y="80" width="230" height="250" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="145" y="108" text-anchor="middle" font-weight="700" fill="#334155">1 · 200 segmented cases</text>
+  <text x="145" y="128" text-anchor="middle" font-size="12" fill="#64748b">no answer key in deployment</text>
+  <g fill="#94a3b8">
+    <!-- 10x10 grid of dots (200 shown as 100 for legibility, note below) -->
+    <g id="row"><circle cx="60" cy="160" r="5"/><circle cx="78" cy="160" r="5"/><circle cx="96" cy="160" r="5"/><circle cx="114" cy="160" r="5"/><circle cx="132" cy="160" r="5"/><circle cx="150" cy="160" r="5"/><circle cx="168" cy="160" r="5"/><circle cx="186" cy="160" r="5"/><circle cx="204" cy="160" r="5"/><circle cx="222" cy="160" r="5"/></g>
+    <use href="#row" y="18"/><use href="#row" y="36"/><use href="#row" y="54"/><use href="#row" y="72"/><use href="#row" y="90"/><use href="#row" y="108"/><use href="#row" y="126"/>
+  </g>
+  <text x="145" y="318" text-anchor="middle" font-size="11" fill="#64748b">(each dot = a case)</text>
+
+  <line x1="262" y1="205" x2="300" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Step 2: features -->
+  <rect x="304" y="80" width="230" height="250" rx="12" fill="#eefbf1" stroke="#1a7f37" stroke-width="2"/>
+  <text x="419" y="108" text-anchor="middle" font-weight="700" fill="#166534">2 · reference-free signals</text>
+  <g font-size="12" fill="#1e293b">
+    <text x="320" y="140" font-weight="600" fill="#2f5bb7">mri</text>
+    <text x="320" y="158">· TTA disagreement</text><text x="320" y="174">· MC-dropout spread</text><text x="320" y="190">· shape plausibility</text><text x="320" y="206">· registration residual</text>
+    <text x="320" y="236" font-weight="600" fill="#9c2f62">pathology</text>
+    <text x="320" y="254">· blur · folds · pen marks</text><text x="320" y="270">· stain outlier score</text><text x="320" y="286">· embedding OOD score</text><text x="320" y="302">· implausible cell stats</text>
+  </g>
+
+  <line x1="536" y1="205" x2="574" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Step 3: calibrated score -->
+  <rect x="578" y="80" width="230" height="250" rx="12" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
+  <text x="693" y="108" text-anchor="middle" font-weight="700" fill="#92400e">3 · calibrated trust score</text>
+  <text x="693" y="128" text-anchor="middle" font-size="12" fill="#92400e">small classifier, checked on held-out error</text>
+  <!-- histogram bars -->
+  <g fill="#fbbf24" stroke="#92400e" stroke-width="1">
+    <rect x="600" y="270" width="18" height="40"/><rect x="622" y="285" width="18" height="25"/><rect x="644" y="290" width="18" height="20"/>
+    <rect x="666" y="280" width="18" height="30"/><rect x="688" y="250" width="18" height="60"/><rect x="710" y="210" width="18" height="100"/>
+    <rect x="732" y="180" width="18" height="130"/><rect x="754" y="160" width="18" height="150"/><rect x="776" y="170" width="18" height="140"/>
+  </g>
+  <line x1="600" y1="312" x2="796" y2="312" stroke="#92400e"/>
+  <text x="600" y="326" font-size="11" fill="#92400e">0 — untrusted</text><text x="746" y="326" font-size="11" fill="#92400e">trusted — 1</text>
+  <!-- operating point -->
+  <line x1="642" y1="150" x2="642" y2="312" stroke="#dc2626" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="646" y="160" font-size="11" fill="#dc2626">operating point</text>
+  <text x="646" y="174" font-size="11" fill="#dc2626">= review budget 10 %</text>
+
+  <line x1="810" y1="205" x2="848" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- Step 4: verdicts -->
+  <rect x="852" y="80" width="220" height="250" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="962" y="108" text-anchor="middle" font-weight="700" fill="#0f172a">4 · verdicts</text>
+  <rect x="870" y="130" width="184" height="50" rx="8" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="962" y="151" text-anchor="middle" font-weight="600" fill="#166534">accept · 184</text><text x="962" y="169" text-anchor="middle" font-size="11" fill="#166534">use unreviewed</text>
+  <rect x="870" y="192" width="184" height="50" rx="8" fill="#fef3c7" stroke="#d97706"/>
+  <text x="962" y="213" text-anchor="middle" font-weight="600" fill="#92400e">review · 14</text><text x="962" y="231" text-anchor="middle" font-size="11" fill="#92400e">the queue, least trusted first</text>
+  <rect x="870" y="254" width="184" height="50" rx="8" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="962" y="275" text-anchor="middle" font-weight="600" fill="#991b1b">reject · 2</text><text x="962" y="293" text-anchor="middle" font-size="11" fill="#991b1b">failed a plausibility rule</text>
+
+  <g font-size="13" fill="#334155">
+    <text x="30" y="370" font-weight="600" fill="#0f172a">Why this shape:</text>
+    <text x="150" y="370">a mean Dice of 0.91 says nothing about which cases failed. The audit ranks every case by predicted trustworthiness,</text>
+    <text x="30" y="392">then the reviewer's budget — not a metric — decides where the line goes. Same four steps for volumes and slides; only step 2's signals differ.</text>
+    <text x="30" y="420" fill="#94a3b8" font-size="12">docs/img/review_budget_funnel.svg · numbers are illustrative; real ones come from runs/ledger.jsonl</text>
+  </g>
+</svg>
+"""
+
+if __name__ == "__main__":
+    write_svg("review_budget_funnel", SVG)

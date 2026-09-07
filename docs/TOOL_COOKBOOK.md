@@ -6,7 +6,7 @@ Copy, paste, compare. Every command is run from the repository root with
 the virtual environment active (`(.venv)` in the prompt). Commands are the
 same on Windows, macOS and RHEL 8 unless a PowerShell variant is shown.
 
-## Available now (Phase 0)
+## Available now (Phases 0–0c)
 
 ```bash
 imagingagent --help
@@ -62,6 +62,44 @@ ledger   runs/ledger.jsonl (run 3f2a9c1d7e0b)
 Safe to rerun; each run adds a ledger line.
 
 ```bash
+imagingagent tracks --config configs/default.yaml
+```
+```
+mri         : enabled
+  dataset   : msd_task04_hippocampus (MRI, CC-BY-SA 4.0)
+  spacing   : (1.0, 1.0, 1.0) mm
+  synthetic : fallback on (20 cases, seed 20260901)
+pathology   : enabled
+  dataset   : kather2016             role=tissue   on   CC-BY 4.0
+  dataset   : pannuke                role=nuclei   on   CC-BY-NC-SA 4.0
+  dataset   : deepliif               role=ihc      on   recorded at download
+  dataset   : mcmicro_exemplar001    role=mif      on   recorded at download
+  dataset   : visium_hne             role=spatial  on   recorded at download
+  resolution: 0.5 µm/px
+  synthetic : fallback on (40 tiles, seed 20260904)
+audit       : review budget 10%
+```
+
+```bash
+imagingagent modalities                      # or: --track pathology
+```
+```
+modality                track      geometry status       description
+MRI                     mri        volume   implemented  Magnetic resonance imaging — soft tissue in 3D
+SYNTHETIC               shared     volume   implemented  Generated stand-in data; ...
+CT                      mri        volume   planned      Computed tomography — ...
+...
+HE                      pathology  tile     implemented  Haematoxylin and eosin — the standard tissue stain
+...
+```
+
+```bash
+imagingagent doctor --config configs/default.yaml --track mri
+```
+Same as `doctor`, but only the `[mri]` group of optional libraries is listed.
+An unknown track name exits with code 2.
+
+```bash
 imagingagent config show --config configs/default.yaml
 ```
 Prints the validated configuration as JSON with every default filled in.
@@ -70,9 +108,10 @@ Prints the validated configuration as JSON with every default filled in.
 imagingagent ledger list
 ```
 ```
-run_id        started_at            command     status    config
-3f2a9c1d7e0b  2026-09-06T14:03:22Z  init        finished  9fb4eea0e4ff
+run_id        started_at            command     track      status    config
+3f2a9c1d7e0b  2026-09-06T14:03:22Z  init        shared     finished  1c0b7d2e9a4f
 ```
+Add `--track mri` or `--track pathology` to see one track's runs only.
 
 Using an environment variable instead of `--config`:
 
@@ -84,7 +123,8 @@ Using an environment variable instead of `--config`:
 ## Development checks
 
 ```bash
-pytest                      # 31 passed
+pytest                      # 53 passed
+python scripts/figures/all.py   # regenerate every illustration in docs/img/
 pytest -x                   # stop at the first failure
 pytest -k storage           # only tests with "storage" in the name
 ruff check .                # All checks passed!

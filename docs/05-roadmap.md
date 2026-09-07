@@ -30,8 +30,8 @@ budget is wall-clock on an Intel laptop without a GPU, excluding downloads.
 | # | Phase | mri | pathology | shared | CPU | Status | Tag |
 |---|---|---|---|---|---|---|---|
 | 0 | Skeleton | — | — | config, storage, contracts, ledger, CLI, tests, 3-OS CI | < 1 min | ✅ | — |
-| 0b | Documentation set | — | — | README, handbook, glossary, architecture, roadmaps, data doc, cookbook, uninstall, ADRs | 0 | 🔧 | — |
-| 0c | Two-track refactor | track config, `VolumeGeometry` | track config, `TileGeometry` | `--track` on every command, `doctor` per track, modality registry, tests updated in place | < 1 min | ⏳ | — |
+| 0b | Documentation set | — | — | README, handbook, glossary, architecture, roadmaps, data doc, cookbook, uninstall, ADRs | 0 | ✅ | — |
+| 0c | Two-track refactor | track config, `VolumeGeometry` | track config, `TileGeometry` | `--track` on every command, `doctor` per track, modality registry, lock-based CI, figures as scripts; 31 tests kept, 22 added | < 1 min (measured) | ✅ | — |
 | 1 | Ingestion | MSD hippocampus download + synthetic volumes; NIfTI + DICOM readers | Kather-2016, PanNuke fold, DeepLIIF test set, MCMICRO exemplar-001, Visium sample; synthetic H&E / mIF / spot generators; OME-TIFF and SVS readers | case manifest; checksums; every command runs offline | < 5 min | ⏳ | — |
 | 2 | Preprocessing | resample, normalise, denoise, rigid register, paired transforms | colour deconvolution, Macenko, stain augmentation, tissue mask, tiling | augmentation as robustness tool | < 5 min | ⏳ | — |
 | 3 | Segmentation | classical; 3D U-Net (≈ 10–15 min training); Dice / HD95 / NSD; import label maps | classical; InstanSeg; Dice / AJI / PQ; import label maps and QuPath GeoJSON | one segmentation contract; per-case failure lists | ≈ 20 min | ⏳ | **v0.1.0** |

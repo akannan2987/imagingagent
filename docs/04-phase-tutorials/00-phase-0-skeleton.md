@@ -262,7 +262,7 @@ help text taken from the docstring.
 
 ## 8. Tests — the safety net
 
-`tests/` holds 31 tests, one file per module. A **unit test** is a tiny
+`tests/` held 31 tests at the end of this phase, one file per module (Phase 0c extends them to 53). A **unit test** is a tiny
 program that calls one function with known input and asserts the output.
 Run them:
 
@@ -270,7 +270,7 @@ Run them:
 pytest
 ```
 
-**Success looks like:** `31 passed`. Now see what a failure looks like — in
+**Success looks like:** `31 passed` (or `53 passed` if Phase 0c has landed). Now see what a failure looks like — in
 `tests/test_config.py`, change `0.10` to `0.11` in `test_defaults_are_valid`,
 run `pytest` again, read the report (it shows the expected and actual
 values), then change it back. Knowing what a failure *looks like* before
@@ -336,7 +336,7 @@ Both call identical code. If they ever disagree, that is a bug.
 - [ ] `imagingagent config show --config configs/bad.yaml` refuses an out-of-range value
 - [ ] the storage experiment raised `StorageError` for `../escape.txt`
 - [ ] `imagingagent ledger list` shows your `init` runs
-- [ ] `pytest` → `31 passed`; `ruff check .` → `All checks passed!`
+- [ ] `pytest` passes; `ruff check .` → `All checks passed!`
 - [ ] the Actions tab on GitHub shows a green run on `develop`
 
 ## What could go wrong
