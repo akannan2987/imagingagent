@@ -2,7 +2,7 @@
 
 # The ImagingAgent Handbook — from day 0 to the finished product
 
-**Handbook version:** 0.2 · **Last updated:** 2026-09-06 · **Repository state it describes:** Phases 0, 0b and 0c built; Phase 1 next.
+**Handbook version:** 0.3 · **Last updated:** 2026-09-16 · **Repository state it describes:** Phases 0, 0b, 0c built; Phase 1 in progress (part a — manifest and mri ingestion — built; part b — pathology ingestion — next).
 
 **This is the one document to read first and to come back to.** It walks
 the whole journey — understanding the project, setting up a blank machine,
@@ -43,7 +43,7 @@ flowchart LR
 | 2 | Put the code under version control | 30 min | ✅ guide exists |
 | 3 | Walk through the skeleton (Phase 0) | 1.5 h | ✅ built |
 | 4 | Two-track refactor (Phase 0c) | 1.5–2 h | ✅ built |
-| 5 | Ingestion (Phase 1) | 2–3 h + downloads | ⏳ next |
+| 5 | Ingestion (Phase 1) | 2–3 h + downloads | 🔧 in progress — mri done, pathology next |
 | 6 | Preprocessing (Phase 2) | 2 h | ⏳ |
 | 7 | Segmentation (Phase 3) → **v0.1.0** | 3–4 h | ⏳ |
 | 8 | Uncertainty & repeatability (Phase 4, mri) | 2–3 h | ⏳ |
@@ -192,12 +192,32 @@ shows implemented and planned modalities; `pytest` → `53 passed`.
 
 ---
 
-## Stage 5 — Ingestion (Phase 1) ⏳
+## Stage 5 — Ingestion (Phase 1) 🔧
 
-**What.** Follow `04-phase-tutorials/01-ingestion.md`. Download the
-public datasets ([`08-data-and-models.md`](08-data-and-models.md) lists
-every one with size, licence and command) or generate the synthetic
-stand-ins; read them with their geometry; build the case manifest.
+**What.** Follow `04-phase-tutorials/01-ingestion.md` *(arrives with part c
+of this phase; parts a and b build the code)*. Download the public datasets
+([`08-data-and-models.md`](08-data-and-models.md) lists every one with
+size, licence and command) or generate the synthetic stand-ins; read them
+with their geometry; build the case manifest.
+
+**Built so far (part a):** the shared **manifest** (`manifest.py` — the
+pipeline's shopping list, one JSON file per track); the mri track's NIfTI
+and DICOM readers (`tracks/mri/io.py`) that turn a file's affine or
+DICOM headers into `VolumeGeometry`; the synthetic volume generator
+(`tracks/mri/synth.py`) including a synthetic DICOM series for tests;
+`scripts/download_msd_hippocampus.py` with checksum recording;
+`imagingagent ingest --track mri` and `imagingagent manifest --track mri`;
+`requirements-mri.txt`; a second CI job installing the track extras; 12
+new tests (65 total). **Next (part b):** the pathology readers, five
+dataset downloads and three synthetic generators.
+
+Try it now — no download needed:
+
+```bash
+python -m pip install -r requirements-mri.txt
+imagingagent ingest --track mri --synthetic --limit 5
+imagingagent manifest --track mri
+```
 
 **Why.** Everything downstream is arithmetic on pixels multiplied by
 geometry. Get the geometry wrong — voxel spacing for a scan, microns per

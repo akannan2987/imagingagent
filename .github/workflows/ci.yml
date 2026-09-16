@@ -61,3 +61,37 @@ jobs:
         run: |
           imagingagent version
           imagingagent doctor --config configs/default.yaml
+
+  tracks:
+    # Installs each track's pinned requirements on top of the lock and runs
+    # the track tests. Kept separate so the core job stays fast and a broken
+    # imaging wheel on one platform is visible as its own red cross.
+    name: tracks / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-mri.txt
+      - name: Install the locked core plus the mri track
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.lock
+          python -m pip install -r requirements-mri.txt
+          python -m pip install -e .
+      - name: Track tests
+        run: pytest -m "mri or pathology"
+      - name: Smoke-test ingestion with synthetic data
+        run: |
+          imagingagent init
+          imagingagent ingest --track mri --synthetic --limit 3
+          imagingagent manifest --track mri

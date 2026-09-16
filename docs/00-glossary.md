@@ -44,6 +44,20 @@ into real-world positions: voxel size and orientation for a volume, microns
 per pixel and tile position for a slide. *The scale bar on a map — without
 it, "two centimetres on the map" means nothing.*
 
+**Manifest** — the list of cases a track will work on, written once by
+ingestion and read by every later stage: id, image, reference label,
+geometry, whether synthetic. *The pipeline's shopping list.*
+
+**Checksum** — a fingerprint of a downloaded file recorded at download time
+and re-checked later; proves the raw data never changed. *A wax seal on
+the evidence bag.*
+
+**LPS / RAS** — two conventions for naming the three body axes: DICOM
+scanners speak LPS (+x Left, +y Posterior, +z Superior); NIfTI tools
+usually RAS. Same anatomy, opposite signs on two axes — which is why the
+reader records the code instead of assuming. *Driving on the left vs the
+right: both work, as long as you know which country you are in.*
+
 **Pipeline** — a fixed sequence of processing steps where each step's
 output is the next step's input. *A car assembly line.*
 

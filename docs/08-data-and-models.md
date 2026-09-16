@@ -7,9 +7,10 @@
 what it may be used for, how big it is, how to download it, and what to do
 when you cannot — for both tracks.
 
-**Status note.** Download scripts (`scripts/download_<name>.py`) and
-synthetic generators (`scripts/synth_<name>.py`) arrive with Phase 1;
-this page fixes their names, sources and rules now. Sizes marked *recorded
+**Status note.** The mri download script and synthetic generator are built
+(Phase 1a); the pathology downloads and generators arrive with Phase 1b.
+Synthetic generators live inside each track's package and are run through
+`imagingagent ingest --track <track> --synthetic`. Sizes marked *recorded
 at download* are filled in, with checksums, when Phase 1 first fetches
 each dataset. Nothing here is guessed: each entry states what was verified
 and when.
@@ -63,10 +64,11 @@ and when.
   Registry of Open Data). **Licence:** CC-BY-SA 4.0.
 - **Citation:** Antonelli M. et al. *The Medical Segmentation Decathlon.*
   Nature Communications 13, 4128 (2022).
-- **Download:** `python scripts/download_msd_hippocampus.py` → `data/raw/msd_task04/` *(Phase 1)*.
-- **Synthetic stand-in:** `scripts/synth_volume.py` — seeded 3D volumes
-  with a blurred, noisy ellipsoid "hippocampus" and a matching label map,
-  plus a synthetic DICOM series for the DICOM reader tests.
+- **Download:** `python scripts/download_msd_hippocampus.py` → `data/raw/msd_task04/` — downloads from the AWS mirror hosted for the MONAI project, records SHA-256/MD5 in `CHECKSUMS.txt`, extracts, deletes the archive (`--keep-archive` to keep it; `--verify` to re-check). *(built, Phase 1a)*
+- **Synthetic stand-in:** `imagingagent ingest --track mri --synthetic` (code in
+  `src/imagingagent/tracks/mri/synth.py`) — seeded 3D volumes with a blurred,
+  noisy, randomly rotated ellipsoid "hippocampus" and a matching label map;
+  the same module writes a synthetic DICOM series for the DICOM reader tests. *(built, Phase 1a)*
 - **Honesty note:** two hemispheres per volume are labelled; v0.1.0 treats
   the union as one structure and the subregions are the first extension.
 

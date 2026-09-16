@@ -61,9 +61,26 @@ All notable changes to ImagingAgent are recorded here. The format follows
   and `shape` became read-only properties over `geometry`.
 - CI installs from `requirements.lock` before installing the package.
 
+### Added — Phase 1a: manifest and mri ingestion
+- `manifest.py`: the shared case manifest (one JSON per track) with
+  `save_manifest` / `load_manifest`.
+- `tracks/mri/io.py`: NIfTI and DICOM-series readers that turn the affine
+  or headers into `VolumeGeometry`; `write_nifti`.
+- `tracks/mri/synth.py`: seeded synthetic volumes (rotated ellipsoid, blur,
+  noise) with label maps, and a synthetic DICOM series for reader tests.
+- `tracks/mri/ingest.py`: real (MSD layout) or synthetic ingestion, geometry
+  asserted per case, ledger-recorded.
+- `scripts/download_msd_hippocampus.py` with resume, checksum recording and
+  `--verify`.
+- Commands: `imagingagent ingest --track mri [--synthetic|--real] [--limit N]`,
+  `imagingagent manifest --track mri`.
+- `requirements-mri.txt` (nibabel, SimpleITK); pytest markers `mri` /
+  `pathology`; a CI job installing the track extras and smoke-testing
+  synthetic ingestion on three operating systems; 12 new tests (65 total).
+
 ### Planned for 0.1.0 (end of Phase 3)
-- Phase 1: ingestion for both tracks with public datasets and synthetic
-  generators.
+- Phase 1b/1c: pathology ingestion (five datasets, three synthetic
+  generators) and the Phase 1 tutorial.
 - Phase 2: preprocessing for both tracks.
 - Phase 3: segmentation for both tracks — classical, learned, imported.
 

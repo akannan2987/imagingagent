@@ -17,6 +17,7 @@ Commands in Phase 0c:
     imagingagent modalities [--track]  list every modality: implemented or planned
     imagingagent config show           print the validated configuration
     imagingagent ledger list [--track] show the run history
+    imagingagent ingest --track T      read the cases, assert geometry, write the manifest
 """
 
 from __future__ import annotations
@@ -31,6 +32,7 @@ import typer
 from . import __version__
 from .config import ENV_CONFIG_VAR, TRACK_NAMES, ProjectConfig, load_config, resolve_config_path
 from .ledger import RunLedger
+from .manifest import load_manifest
 from .modality import specs_for_track
 from .schemas import Track
 from .storage import get_storage
@@ -206,6 +208,84 @@ def modalities(track: TrackOption = None) -> None:
             typer.echo(
                 f"{spec.name:<24}{spec.track.value:<11}{spec.geometry:<9}{spec.status:<13}{spec.description}"
             )
+
+
+@app.command()
+def ingest(
+    track: Annotated[str, typer.Option("--track", "-t", help="'mri' or 'pathology'.")],
+    config: ConfigOption = None,
+    synthetic: Annotated[
+        bool | None,
+        typer.Option(
+            "--synthetic/--real",
+            help="Force synthetic or real data; default: real if present, else synthetic fallback.",
+        ),
+    ] = None,
+    limit: Annotated[
+        int | None, typer.Option("--limit", min=1, help="Only the first N cases.")
+    ] = None,
+) -> None:
+    """Find the track's cases, read each one's geometry, and write the manifest."""
+    _validate_track(track)
+    cfg = _load(config)
+    storage = get_storage(cfg.storage)
+    ledger = RunLedger(storage)
+    try:
+        if track == "mri":
+            from .tracks.mri.ingest import ingest_mri
+
+            manifest, key = ingest_mri(cfg, storage, ledger, synthetic=synthetic, limit=limit)
+        else:
+            typer.echo(
+                "error: pathology ingestion arrives in the next phase (see docs/HANDBOOK.md, Stage 5)",
+                err=True,
+            )
+            raise typer.Exit(code=2)
+    except (FileNotFoundError, ValueError, ImportError) as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=2) from exc
+    labelled = len(manifest.with_labels())
+    typer.echo(f"track     : {manifest.track.value}")
+    typer.echo(f"dataset   : {manifest.dataset}{' (synthetic)' if manifest.synthetic else ''}")
+    typer.echo(f"cases     : {len(manifest)} ({labelled} with reference labels)")
+    if manifest.cases:
+        g = manifest.cases[0].geometry
+        typer.echo(
+            f"geometry  : {g.kind}, first case {g.shape} voxels at {g.spacing_mm} mm, {g.orientation}"
+        )
+    typer.echo(f"manifest  : {key}")
+    typer.echo(f"run       : {manifest.run_id}")
+
+
+@app.command()
+def manifest(
+    track: Annotated[str, typer.Option("--track", "-t", help="'mri' or 'pathology'.")],
+    config: ConfigOption = None,
+) -> None:
+    """Show the cases in a track's manifest."""
+    _validate_track(track)
+    cfg = _load(config)
+    try:
+        m = load_manifest(get_storage(cfg.storage), track, cfg.paths.processed.as_posix())
+    except FileNotFoundError as exc:
+        typer.echo(f"error: {exc}", err=True)
+        raise typer.Exit(code=2) from exc
+    typer.echo(
+        f"{m.track.value} · {m.dataset} · {len(m)} cases · created {m.created_at} · run {m.run_id}"
+    )
+    typer.echo(
+        f"{'case_id':<20}{'modality':<12}{'label':<7}{'shape':<18}{'spacing / µm-px':<22}synthetic"
+    )
+    for c in m.cases:
+        g = c.geometry
+        size = (
+            f"{g.spacing_mm} mm"
+            if g is not None and g.kind == "volume"
+            else (f"{g.microns_per_pixel} µm/px" if g else "-")
+        )
+        typer.echo(
+            f"{c.case_id:<20}{c.modality.value:<12}{'yes' if c.label_key else 'no':<7}{str(c.shape):<18}{size:<22}{'yes' if c.synthetic else 'no'}"
+        )
 
 
 @config_app.command("show")

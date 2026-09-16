@@ -1,0 +1,7 @@
+# Exact versions for the mri track, verified to install on Python 3.11 for
+# Windows, macOS and Linux. Install after requirements.txt, with .venv active:
+#     python -m pip install -r requirements-mri.txt
+# Phase 1 needs the two readers below; Phase 3 adds PyTorch (CPU build) and
+# MONAI to this file. See docs/adr/0007-lock-file-and-per-track-dependencies.md
+nibabel==5.4.2
+SimpleITK==2.5.6

@@ -90,6 +90,12 @@ imagingagent = ["py.typed"]
 testpaths = ["tests"]
 addopts = "-ra -q"
 pythonpath = ["src"]
+# Track tests need that track's extras; they skip themselves when the
+# libraries are absent so the core suite always runs on a bare install.
+markers = [
+    "mri: needs requirements-mri.txt",
+    "pathology: needs requirements-pathology.txt",
+]
 
 # ---------------------------------------------------------------------------
 # ruff — linter and formatter (a spell-checker for code style and common bugs).
@@ -110,4 +116,4 @@ select = ["E", "W", "F", "I", "B", "UP"]
 ignore = ["E501"]  # long lines are allowed in docstrings and comments
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["B011"]
+"tests/*" = ["B011", "E402"]  # E402: track tests import after pytest.importorskip

@@ -120,10 +120,36 @@ Using an environment variable instead of `--config`:
 | `export IMAGINGAGENT_CONFIG=configs/default.yaml` | `$env:IMAGINGAGENT_CONFIG="configs/default.yaml"` |
 | `unset IMAGINGAGENT_CONFIG` | `Remove-Item Env:IMAGINGAGENT_CONFIG` |
 
+## Ingestion — mri track (Phase 1a)
+
+Once: `python -m pip install -r requirements-mri.txt`. Then:
+
+```bash
+imagingagent ingest --track mri --synthetic --limit 5     # offline; generates 5 synthetic volumes
+```
+```
+track     : mri
+dataset   : synthetic (synthetic)
+cases     : 5 (5 with reference labels)
+geometry  : volume, first case (36, 50, 36) voxels at (1.0, 1.0, 1.0) mm, RAS
+manifest  : data/processed/manifest_mri.json
+run       : 226bb8ef2818
+```
+
+```bash
+python scripts/download_msd_hippocampus.py     # ≈ 0.4 GB; records checksums in data/raw/msd_task04/CHECKSUMS.txt
+imagingagent ingest --track mri                # real data now present → used automatically
+imagingagent manifest --track mri              # one line per case: modality, label?, shape, spacing, synthetic?
+```
+
+`--real` forces real data (errors if absent); `--synthetic` forces the
+generator; with neither, real data wins when present.
+
 ## Development checks
 
 ```bash
-pytest                      # 53 passed
+pytest                      # 65 passed (track tests skip themselves without the track extras)
+pytest -m mri               # only the mri track tests
 python scripts/figures/all.py   # regenerate every illustration in docs/img/
 pytest -x                   # stop at the first failure
 pytest -k storage           # only tests with "storage" in the name
@@ -140,7 +166,7 @@ stays correct.
 
 | Command | Phase |
 |---|---|
-| `imagingagent ingest --track mri [--synthetic]` · `--track pathology --dataset kather2016` | 1 |
+| `imagingagent ingest --track pathology` | 1b |
 | `imagingagent preprocess --track <track>` | 2 |
 | `imagingagent segment --track mri --method classical\|unet\|import --import-path <file>` · `--track pathology --method classical\|instanseg\|import` | 3 |
 | `imagingagent uncertainty --track mri` · `imagingagent repeatability --track mri` | 4 |

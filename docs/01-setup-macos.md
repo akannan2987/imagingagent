@@ -207,7 +207,7 @@ created  data/raw
 ...
 ledger   runs/ledger.jsonl (run 3f2a9c1d7e0b)
 ...............................                                          [100%]
-53 passed in 0.2s
+65 passed in 0.2s
 ```
 
 Optional libraries `not installed` are expected — each phase adds its own.
@@ -241,8 +241,8 @@ python -m pip install -r requirements-pathology.txt    # slide readers, InstanSe
 python -m pip install -r requirements-serve.txt        # MCP server, review interface
 ```
 
-These files arrive with Phase 1, pinned and verified on all three
-operating systems. `imagingagent doctor` then shows the libraries under
+`requirements-mri.txt` exists now (Phase 1a); the other two arrive with
+their phases. All are pinned and verified on all three operating systems. `imagingagent doctor` then shows the libraries under
 their track heading. On an Intel Mac PyTorch runs on CPU only; on Apple
 Silicon it can use the built-in accelerator (`--device mps`) but every
 tutorial's budget assumes CPU.
