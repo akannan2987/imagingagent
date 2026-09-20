@@ -21,56 +21,25 @@ No account is needed. Nothing here contains personal data.
 from __future__ import annotations
 
 import argparse
-import hashlib
 import sys
-import tarfile
-import urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _download import RAW, download, hashes, record_or_verify  # noqa: E402
+
 URL = "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task04_Hippocampus.tar"
-ROOT = Path(__file__).resolve().parents[1]
-RAW = ROOT / "data" / "raw"
 ARCHIVE = RAW / "Task04_Hippocampus.tar"
 TARGET = RAW / "msd_task04"
 CHECKSUMS = TARGET / "CHECKSUMS.txt"
 
 
-def hashes(path: Path) -> dict[str, str]:
-    sha, md5 = hashlib.sha256(), hashlib.md5()
-    with path.open("rb") as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b""):
-            sha.update(chunk)
-            md5.update(chunk)
-    return {"sha256": sha.hexdigest(), "md5": md5.hexdigest(), "bytes": str(path.stat().st_size)}
+def extract_msd(archive: Path, target: Path) -> None:
+    """Extract, stripping the archive's single top folder (Task04_Hippocampus/)."""
+    import tarfile
 
-
-def download(url: str, dest: Path) -> None:
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    existing = dest.stat().st_size if dest.exists() else 0
-    request = urllib.request.Request(
-        url, headers={"Range": f"bytes={existing}-"} if existing else {}
-    )
-    with urllib.request.urlopen(request) as response:
-        total = existing + int(response.headers.get("Content-Length", 0))
-        mode = "ab" if existing else "wb"
-        done = existing
-        with dest.open(mode) as fh:
-            while True:
-                chunk = response.read(1 << 20)
-                if not chunk:
-                    break
-                fh.write(chunk)
-                done += len(chunk)
-                if total:
-                    print(f"\r  {done / 1e6:8.1f} / {total / 1e6:.1f} MB", end="", flush=True)
-    print()
-
-
-def extract(archive: Path, target: Path) -> None:
     target.mkdir(parents=True, exist_ok=True)
     with tarfile.open(archive) as tar:
         members = [m for m in tar.getmembers() if not Path(m.name).name.startswith("._")]
-        # The archive has one top folder (Task04_Hippocampus/); strip it.
         for m in members:
             parts = Path(m.name).parts
             m.name = str(Path(*parts[1:])) if len(parts) > 1 else ""
@@ -110,13 +79,10 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"downloading {URL}")
     download(URL, ARCHIVE)
-    h = hashes(ARCHIVE)
+    h = record_or_verify(ARCHIVE, CHECKSUMS, URL)
     print(f"sha256 {h['sha256']}\nmd5    {h['md5']}\nbytes  {h['bytes']}")
     print(f"extracting to {TARGET}")
-    extract(ARCHIVE, TARGET)
-    CHECKSUMS.write_text(
-        "".join(f"{k}={v}\n" for k, v in h.items()) + f"url={URL}\n", encoding="utf-8"
-    )
+    extract_msd(ARCHIVE, TARGET)
     n = len(list((TARGET / "imagesTr").glob("*.nii.gz")))
     print(f"done: {n} training volumes in {TARGET / 'imagesTr'}; checksums recorded in {CHECKSUMS}")
     if not args.keep_archive:

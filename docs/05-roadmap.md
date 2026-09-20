@@ -32,7 +32,7 @@ budget is wall-clock on an Intel laptop without a GPU, excluding downloads.
 | 0 | Skeleton | — | — | config, storage, contracts, ledger, CLI, tests, 3-OS CI | < 1 min | ✅ | — |
 | 0b | Documentation set | — | — | README, handbook, glossary, architecture, roadmaps, data doc, cookbook, uninstall, ADRs | 0 | ✅ | — |
 | 0c | Two-track refactor | track config, `VolumeGeometry` | track config, `TileGeometry` | `--track` on every command, `doctor` per track, modality registry, lock-based CI, figures as scripts; 31 tests kept, 22 added | < 1 min (measured) | ✅ | — |
-| 1 | Ingestion | ✅ MSD download + synthetic volumes (+ DICOM series); NIfTI + DICOM readers | ⏳ Kather-2016, PanNuke fold, DeepLIIF test set, MCMICRO exemplar-001, Visium sample; synthetic H&E / mIF / spot generators; OME-TIFF and SVS readers | ✅ case manifest; checksums; offline runs | < 1 min (mri, measured) | 🔧 | — |
+| 1 | Ingestion | ✅ MSD download + synthetic volumes (+ DICOM series); NIfTI + DICOM readers | ✅ Kather-2016, PanNuke fold, DeepLIIF validation set, MCMICRO exemplar-001, Visium sample; synthetic H&E / mIF / spot generators; TIFF, OME-TIFF, PNG, Parquet, h5ad readers (SVS via openslide-bin deferred to the first real slide) | ✅ case manifest; shared download helper with checksums; offline runs | < 1 min synthetic (measured) | 🔧 tutorial | — |
 | 2 | Preprocessing | resample, normalise, denoise, rigid register, paired transforms | colour deconvolution, Macenko, stain augmentation, tissue mask, tiling | augmentation as robustness tool | < 5 min | ⏳ | — |
 | 3 | Segmentation | classical; 3D U-Net (≈ 10–15 min training); Dice / HD95 / NSD; import label maps | classical; InstanSeg; Dice / AJI / PQ; import label maps and QuPath GeoJSON | one segmentation contract; per-case failure lists | ≈ 20 min | ⏳ | **v0.1.0** |
 | 4 | Uncertainty & repeatability *(mri)* | TTA, MC-dropout, calibration; perturbation study → minimum detectable difference | — | — | ≈ 15 min | ⏳ | — |
@@ -74,7 +74,8 @@ Symmetric by design: each track lists the same categories.
 | Gated foundation models (UNI, CONCH, Virchow, Prov-GigaPath, OpenMidnight, H-optimus-0) | 🔒 | the embedding contract accepts any encoder; add when access is granted and the free-GPU path is used (sizes > 2 GB) |
 | Hibou-B (Apache-2.0, click-gate) | 🔒 | optional in Phase 6 for anyone with a free account; not required |
 | Larger datasets (BCI HER2 pairs ≈ 4 GB, Lizard, CoNSeP, NCT-CRC-100K 12 GB, TCGA slides) | 🔒 | disk-budget trigger (project stays under 6 GB); download scripts stay generic |
-| Whole-slide inference (full WSI, not tiles) | 🔒 | the tiler is WSI-ready via openslide-bin / tiffslide; scheduled with the first real slide; object storage recommended |
+| Whole-slide inference (full WSI, not tiles) | 🔒 | openslide-bin / tiffslide readers and a tiler are added with the first real slide (none of the five datasets is a whole slide); object storage recommended |
+| Cycle-to-cycle registration of MCMICRO tiles | ⏳ Phase 2 | the exemplar ships raw, unregistered tiles per cycle; rigid registration reuses the mri track's SimpleITK code — a cross-track reuse worth showing |
 | Virtual staining (IHC → mIF, H&E → IHC) and image synthesis | 🔒 | GPU trigger; DeepLIIF pairs are already ingested for training data; roadmap for generative models |
 | CellViT / HoVer-Net as alternative nucleus models | 🔒 | licence and size review; contract already accepts them |
 | 10x Xenium / CosMx (single-cell spatial transcriptomics) | 🔒 | when a small public sample under 2 GB is identified |

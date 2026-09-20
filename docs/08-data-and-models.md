@@ -7,10 +7,13 @@
 what it may be used for, how big it is, how to download it, and what to do
 when you cannot — for both tracks.
 
-**Status note.** The mri download script and synthetic generator are built
-(Phase 1a); the pathology downloads and generators arrive with Phase 1b.
-Synthetic generators live inside each track's package and are run through
-`imagingagent ingest --track <track> --synthetic`. Sizes marked *recorded
+**Status note.** All six download scripts and all synthetic generators are
+built (Phase 1a/1b). Every script shares `scripts/_download.py` (resumable
+download, checksums recorded on first run and verified afterwards,
+publisher MD5 enforced where one is published). Synthetic generators live
+inside each track's package and run through
+`imagingagent ingest --track <track> --synthetic`. Sizes marked *recorded at
+download* are written into each dataset's `CHECKSUMS.txt` on first download. Sizes marked *recorded
 at download* are filled in, with checksums, when Phase 1 first fetches
 each dataset. Nothing here is guessed: each entry states what was verified
 and when.
@@ -94,9 +97,8 @@ above.
 - **Source:** Zenodo record 53169. **Licence:** CC-BY 4.0.
 - **Citation:** Kather J.N. et al. *Multi-class texture analysis in
   colorectal cancer histology.* Scientific Reports 6, 27988 (2016).
-- **Download:** `python scripts/download_kather2016.py` → `data/raw/kather2016/`.
-- **Synthetic stand-in:** `scripts/synth_he_tiles.py` — seeded tiles with
-  drawn "nuclei" and class-specific textures, eight classes.
+- **Download:** `python scripts/download_kather2016.py` → `data/raw/kather2016/Kather_texture_2016_image_tiles_5000/<NN_CLASS>/*.tif` (verified URL: Zenodo record 53169). *(built)*
+- **Synthetic stand-in:** `tracks/pathology/synth.py::generate_synthetic_he` — seeded 256 px tiles with drawn nuclei, class-specific tint and texture, eight classes. *(built)*
 
 ### PanNuke — nucleus instances and types *(one fold)*
 
@@ -113,11 +115,10 @@ above.
   results derived from it inherit this.**
 - **Citation:** Gamper J. et al. *PanNuke Dataset Extension, Insights and
   Baselines.* arXiv:2003.10778 (2020).
-- **Download:** `python scripts/download_pannuke.py --fold 3` → `data/raw/pannuke/`.
-- **Synthetic stand-in:** the H&E generator above also emits instance
-  masks and types.
+- **Download:** `python scripts/download_pannuke.py` (default `--fold fold3 --tiles 500`) → the fold's Parquet file (≈ 280 MB, kept as the raw download with checksum) plus a seeded subset extracted to `data/raw/pannuke/extracted/fold3/{images,labels,index.csv}` by `tracks/pathology/pannuke.py`. Verified: mirror `RationAI/PanNuke`, columns image / instances / categories / tissue, 0.25 µm/px. *(built)*
+- **Synthetic stand-in:** the H&E generator also writes instance maps and nucleus types (`.npz`). *(built)*
 
-### DeepLIIF — paired IHC and multiplex immunofluorescence *(test set)*
+### DeepLIIF — paired IHC and multiplex immunofluorescence *(validation set)*
 
 - **What:** co-registered image sets of the same tissue: an IHC image
   (Ki67, brown DAB with blue counterstain), the matching multiplex IF
@@ -126,16 +127,17 @@ above.
 - **Why:** the only public dataset pairing brightfield IHC with
   fluorescence of the *same* cells — the honest test for IHC positivity
   (compare to the fluorescence channel) and the ingredient for virtual
-  staining later. The test set is the small download; the training set
-  is optional.
-- **Source:** Zenodo record 4751737. **Licence:** *recorded at download*
-  from the record page.
+  staining later. The **validation set (161 MB)** is the download; testing
+  (1.0 GB) and training (1.0 GB) are optional flags.
+- **Source:** Zenodo record 4751737. **Licence:** CC-BY 4.0 (verified on
+  the record; the *code* is Apache-2.0 with Commons Clause, which does not
+  apply to the images). Each archive's MD5 is published on the record and
+  enforced by the script.
 - **Citation:** Ghahremani P. et al. *Deep learning-inferred multiplex
   immunofluorescence for immunohistochemical image quantification.* Nature
   Machine Intelligence 4, 401–412 (2022).
-- **Download:** `python scripts/download_deepliif.py --split test` → `data/raw/deepliif/`.
-- **Synthetic stand-in:** `scripts/synth_mif_tiles.py` emits a DAB-like
-  RGB tile and matching fluorescence channels from one set of drawn cells.
+- **Download:** `python scripts/download_deepliif.py` (default `--split validation`) → `data/raw/deepliif/DeepLIIF_Validation_Set/*.png`; each PNG is six 512 px panels side by side (IHC | Hematoxylin | DAPI | Lap2 | Marker | Seg), split by `read_deepliif_composite`. *(built)*
+- **Synthetic stand-in:** `generate_synthetic_mif` writes a DeepLIIF-style composite (DAB rendering of the same drawn cells + fluorescence panels + mask). *(built)*
 
 ### MCMICRO exemplar-001 — multiplex immunofluorescence (CyCIF)
 
@@ -146,13 +148,17 @@ above.
   registration, small enough to process on a laptop: tests the OME-TIFF
   reader, channel-invariant cell segmentation and per-channel positivity.
 - **Source:** Laboratory of Systems Pharmacology (labsyspharm) MCMICRO
-  exemplars. **Licence:** *recorded at download.* **Access:** direct
-  download URL *recorded at download*; no Nextflow needed.
+  exemplars; direct zip `https://mcmicro.s3.amazonaws.com/exemplars/exemplar-001.zip`
+  (verified; 240 MB, 320 MB unzipped; no Nextflow needed). **Licence:**
+  *recorded at download.* **Note:** the zip holds the *raw* acquisition —
+  three cycle files, six four-channel tiles each, unstitched and
+  unregistered — plus `markers.csv`. Each tile of each cycle becomes one
+  case tagged `registered: no`; registering the cycles is a Phase 2 task.
 - **Citation:** Schapiro D. et al. *MCMICRO: a scalable, modular
   image-processing pipeline for multiplexed tissue imaging.* Nature Methods
   19, 311–315 (2022).
-- **Download:** `python scripts/download_mcmicro_exemplar.py` → `data/raw/mcmicro_exemplar001/`.
-- **Synthetic stand-in:** the multi-channel generator above.
+- **Download:** `python scripts/download_mcmicro_exemplar.py` → `data/raw/mcmicro_exemplar001/exemplar-001/`. *(built)*
+- **Synthetic stand-in:** `generate_synthetic_mif` — four-channel (DAPI, CD8, PanCK, Ki67) OME-TIFF with pixel size and channel names in the metadata. *(built)*
 
 ### 10x Visium — spatial transcriptomics with H&E (via squidpy)
 
@@ -167,10 +173,8 @@ above.
   at download* (10x public datasets are released for research use).
 - **Citation:** Palla G. et al. *Squidpy: a scalable framework for spatial
   omics analysis.* Nature Methods 19, 171–178 (2022).
-- **Download:** `python scripts/download_visium_sample.py` → `data/raw/visium_hne/`.
-- **Synthetic stand-in:** `scripts/synth_spots.py` — a seeded spot grid
-  with a handful of "genes" whose expression follows drawn tissue regions
-  on a synthetic H&E image.
+- **Download:** `python scripts/download_visium_sample.py` → `data/raw/visium_hne/visium_hne_adata.h5ad`; tries the squidpy project's direct file first, falls back to `squidpy.datasets.visium_hne_adata` if that fails (and says so). *(built)*
+- **Synthetic stand-in:** `generate_synthetic_spots` — a seeded spot grid over a synthetic H&E image with six "genes" whose counts follow two drawn regions, written as `.h5ad`. *(built)*
 
 ---
 

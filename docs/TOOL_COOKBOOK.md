@@ -145,11 +145,41 @@ imagingagent manifest --track mri              # one line per case: modality, la
 `--real` forces real data (errors if absent); `--synthetic` forces the
 generator; with neither, real data wins when present.
 
+## Ingestion — pathology track (Phase 1b)
+
+Once: `python -m pip install -r requirements-pathology.txt`. Then:
+
+```bash
+imagingagent ingest --track pathology --synthetic --limit 8    # offline; all five dataset roles
+```
+```
+track     : pathology
+dataset   : synthetic:tissue,synthetic:nuclei,synthetic:ihc,synthetic:mif,synthetic:spatial (synthetic)
+cases     : 21 (12 with reference labels)
+geometry  : tile, first case 256×256 px at 0.25 µm/px, channels ['R', 'G', 'B']
+roles     : ihc=2, mif=2, nuclei=8, spatial=1, tissue=8
+manifest  : data/processed/manifest_pathology.json
+run       : 02298f9d1cea
+```
+
+Real data, one script per dataset (each records checksums; each is safe to rerun):
+
+```bash
+python scripts/download_kather2016.py            # ≈ hundreds of MB, CC-BY 4.0
+python scripts/download_pannuke.py               # one fold ≈ 280 MB, extracts 500 tiles; CC-BY-NC-SA 4.0
+python scripts/download_deepliif.py              # validation set 161 MB, publisher MD5 checked; CC-BY 4.0
+python scripts/download_mcmicro_exemplar.py      # 240 MB zip; raw CyCIF tiles + markers.csv
+python scripts/download_visium_sample.py         # ≈ 0.4–0.5 GB h5ad
+imagingagent ingest --track pathology            # real data wins, role by role; synthetic fills any gap
+imagingagent manifest --track pathology
+```
+
 ## Development checks
 
 ```bash
-pytest                      # 65 passed (track tests skip themselves without the track extras)
+pytest                      # 77 passed (track tests skip themselves without the track extras)
 pytest -m mri               # only the mri track tests
+pytest -m pathology         # only the pathology track tests
 python scripts/figures/all.py   # regenerate every illustration in docs/img/
 pytest -x                   # stop at the first failure
 pytest -k storage           # only tests with "storage" in the name
@@ -166,7 +196,6 @@ stays correct.
 
 | Command | Phase |
 |---|---|
-| `imagingagent ingest --track pathology` | 1b |
 | `imagingagent preprocess --track <track>` | 2 |
 | `imagingagent segment --track mri --method classical\|unet\|import --import-path <file>` · `--track pathology --method classical\|instanseg\|import` | 3 |
 | `imagingagent uncertainty --track mri` · `imagingagent repeatability --track mri` | 4 |

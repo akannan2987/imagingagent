@@ -285,7 +285,7 @@ created  data/raw
 ...
 ledger   runs/ledger.jsonl (run 3f2a9c1d7e0b)
 ...............................                                          [100%]
-65 passed in 0.2s
+77 passed in 0.2s
 ```
 
 The optional libraries listed as `not installed` are expected: each later
@@ -326,8 +326,10 @@ python -m pip install -r requirements-pathology.txt    # slide readers, InstanSe
 python -m pip install -r requirements-serve.txt        # MCP server, review interface
 ```
 
-`requirements-mri.txt` exists now (Phase 1a); the other two arrive with
-their phases. All are pinned and verified on all three operating systems. `imagingagent doctor` then shows the libraries under
+`requirements-mri.txt` and `requirements-pathology.txt` exist now (Phase 1);
+`requirements-serve.txt` arrives with Phase 11. All are pinned and verified
+on all three operating systems (the pathology pins were chosen so that
+Intel Macs still get prebuilt wheels). `imagingagent doctor` then shows the libraries under
 their track heading. **PyTorch on Windows** installs its CPU build from
 the standard index; the pinned file names the exact wheel so no GPU
 drivers are involved.

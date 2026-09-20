@@ -141,6 +141,10 @@ class CaseRecord(BaseModel):
     geometry: Geometry | None = Field(default=None, description="VolumeGeometry or TileGeometry.")
     synthetic: bool = Field(default=False, description="True when generated, not acquired.")
     source: str = Field(default="", description="Where the case came from (dataset name, URL).")
+    tags: dict[str, str] = Field(
+        default_factory=dict,
+        description="Dataset-level attributes, e.g. tissue_class, dataset_role, cycle, label_panel.",
+    )
 
     @model_validator(mode="after")
     def _consistent(self) -> CaseRecord:

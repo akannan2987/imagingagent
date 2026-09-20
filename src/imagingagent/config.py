@@ -149,6 +149,16 @@ class PathologyTrackConfig(BaseModel):
     target_microns_per_pixel: float = Field(
         default=0.5, gt=0, description="Resolution every tile is resampled to."
     )
+    mif_default_microns_per_pixel: float = Field(
+        default=0.65,
+        gt=0,
+        description="Used for multiplex-IF files whose metadata lacks a pixel size.",
+    )
+    pannuke_tiles: int = Field(
+        default=500,
+        ge=1,
+        description="How many PanNuke tiles the download script extracts from the fold.",
+    )
     use_synthetic_fallback: bool = True
     synthetic_tiles: int = Field(default=40, ge=1, le=100_000)
     seed: int = Field(default=20260904, ge=0)

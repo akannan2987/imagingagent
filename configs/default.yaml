@@ -74,6 +74,10 @@ tracks:
         enabled: true
     # Common ground for every tile: resample to this resolution (microns per pixel).
     target_microns_per_pixel: 0.5
+    # Multiplex-IF files whose metadata carries no pixel size get this value.
+    mif_default_microns_per_pixel: 0.65
+    # The PanNuke download script extracts this many tiles from one fold.
+    pannuke_tiles: 500
     use_synthetic_fallback: true
     synthetic_tiles: 40
     seed: 20260904

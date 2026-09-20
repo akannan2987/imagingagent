@@ -78,9 +78,31 @@ All notable changes to ImagingAgent are recorded here. The format follows
   `pathology`; a CI job installing the track extras and smoke-testing
   synthetic ingestion on three operating systems; 12 new tests (65 total).
 
+### Added — Phase 1b: pathology ingestion
+- `tracks/pathology/io.py`: readers for TIFF/PNG tiles, DeepLIIF six-panel
+  composites, OME-TIFF (pixel size and channel names from OME-XML,
+  `markers.csv` fallback), extracted PanNuke tiles, and Visium `.h5ad`
+  (pixel size derived from the 55 µm spot diameter); PNG and OME-TIFF writers.
+- `tracks/pathology/synth.py`: seeded H&E tiles with drawn nuclei, instance
+  maps, nucleus types and eight tissue classes; multi-channel fluorescence
+  written as OME-TIFF and as a DeepLIIF-style composite; a Visium-like spot
+  matrix as `.h5ad`.
+- `tracks/pathology/pannuke.py`: seeded subset extraction from the Parquet
+  mirror to per-tile PNG + `.npz` + `index.csv`.
+- `tracks/pathology/ingest.py`: five dataset roles, real data winning over
+  synthetic role by role, every case tagged with its role.
+- `scripts/_download.py` (resumable download, checksums recorded/verified,
+  publisher MD5, extraction) and `scripts/download_{kather2016,pannuke,
+  deepliif,mcmicro_exemplar,visium_sample}.py`; the MSD script now uses the
+  same helper. Every script has `--help`.
+- `CaseRecord.tags` for dataset-level attributes; config gains
+  `mif_default_microns_per_pixel` and `pannuke_tiles`.
+- `requirements-pathology.txt` (tifffile, Pillow, pyarrow, anndata, scipy,
+  h5py, pandas — pinned to versions with Intel-macOS wheels); CI installs
+  both tracks and smoke-tests pathology ingestion; 12 new tests (77 total).
+
 ### Planned for 0.1.0 (end of Phase 3)
-- Phase 1b/1c: pathology ingestion (five datasets, three synthetic
-  generators) and the Phase 1 tutorial.
+- Phase 1c: the Phase 1 tutorial (`docs/04-phase-tutorials/01-ingestion.md`).
 - Phase 2: preprocessing for both tracks.
 - Phase 3: segmentation for both tracks — classical, learned, imported.
 

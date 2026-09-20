@@ -63,7 +63,7 @@ jobs:
           imagingagent doctor --config configs/default.yaml
 
   tracks:
-    # Installs each track's pinned requirements on top of the lock and runs
+    # Installs both tracks' pinned requirements on top of the lock and runs
     # the track tests. Kept separate so the core job stays fast and a broken
     # imaging wheel on one platform is visible as its own red cross.
     name: tracks / ${{ matrix.os }}
@@ -82,11 +82,13 @@ jobs:
           cache-dependency-path: |
             requirements.lock
             requirements-mri.txt
-      - name: Install the locked core plus the mri track
+            requirements-pathology.txt
+      - name: Install the locked core plus both tracks
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.lock
           python -m pip install -r requirements-mri.txt
+          python -m pip install -r requirements-pathology.txt
           python -m pip install -e .
       - name: Track tests
         run: pytest -m "mri or pathology"
@@ -95,3 +97,5 @@ jobs:
           imagingagent init
           imagingagent ingest --track mri --synthetic --limit 3
           imagingagent manifest --track mri
+          imagingagent ingest --track pathology --synthetic --limit 4
+          imagingagent manifest --track pathology

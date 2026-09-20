@@ -1,0 +1,15 @@
+# Exact versions for the pathology track, verified to install on Python 3.11
+# for Windows, macOS (Intel and Apple Silicon) and Linux. Install after
+# requirements.txt, with .venv active:
+#     python -m pip install -r requirements-pathology.txt
+# Phase 1 needs the readers below (TIFF/OME-TIFF, PNG, Parquet for the
+# PanNuke mirror, h5ad for Visium). Phase 3 adds PyTorch (CPU) and InstanSeg;
+# Phase 6 adds transformers; Phase 7 adds torch-geometric and squidpy.
+# See docs/adr/0007-lock-file-and-per-track-dependencies.md
+tifffile==2026.3.3
+Pillow==12.3.0
+pyarrow==25.0.1
+anndata==0.12.19
+scipy==1.14.0
+h5py==3.16.0
+pandas==2.3.2

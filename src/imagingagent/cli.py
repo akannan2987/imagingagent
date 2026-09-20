@@ -18,6 +18,7 @@ Commands in Phase 0c:
     imagingagent config show           print the validated configuration
     imagingagent ledger list [--track] show the run history
     imagingagent ingest --track T      read the cases, assert geometry, write the manifest
+    imagingagent manifest --track T    show the cases in a track's manifest
 """
 
 from __future__ import annotations
@@ -236,11 +237,9 @@ def ingest(
 
             manifest, key = ingest_mri(cfg, storage, ledger, synthetic=synthetic, limit=limit)
         else:
-            typer.echo(
-                "error: pathology ingestion arrives in the next phase (see docs/HANDBOOK.md, Stage 5)",
-                err=True,
-            )
-            raise typer.Exit(code=2)
+            from .tracks.pathology.ingest import ingest_pathology
+
+            manifest, key = ingest_pathology(cfg, storage, ledger, synthetic=synthetic, limit=limit)
     except (FileNotFoundError, ValueError, ImportError) as exc:
         typer.echo(f"error: {exc}", err=True)
         raise typer.Exit(code=2) from exc
@@ -250,9 +249,20 @@ def ingest(
     typer.echo(f"cases     : {len(manifest)} ({labelled} with reference labels)")
     if manifest.cases:
         g = manifest.cases[0].geometry
-        typer.echo(
-            f"geometry  : {g.kind}, first case {g.shape} voxels at {g.spacing_mm} mm, {g.orientation}"
-        )
+        if g is not None and g.kind == "volume":
+            typer.echo(
+                f"geometry  : volume, first case {g.shape} voxels at {g.spacing_mm} mm, {g.orientation}"
+            )
+        elif g is not None:
+            typer.echo(
+                f"geometry  : tile, first case {g.width}×{g.height} px at {g.microns_per_pixel} µm/px, channels {g.channels}"
+            )
+        roles = sorted({c.tags.get("dataset_role", "-") for c in manifest.cases})
+        if roles != ["-"]:
+            counts = {
+                r: sum(1 for c in manifest.cases if c.tags.get("dataset_role") == r) for r in roles
+            }
+            typer.echo("roles     : " + ", ".join(f"{r}={n}" for r, n in counts.items()))
     typer.echo(f"manifest  : {key}")
     typer.echo(f"run       : {manifest.run_id}")
 
@@ -274,17 +284,18 @@ def manifest(
         f"{m.track.value} · {m.dataset} · {len(m)} cases · created {m.created_at} · run {m.run_id}"
     )
     typer.echo(
-        f"{'case_id':<20}{'modality':<12}{'label':<7}{'shape':<18}{'spacing / µm-px':<22}synthetic"
+        f"{'case_id':<32}{'modality':<24}{'label':<7}{'shape':<16}{'spacing / µm-px':<16}{'synthetic':<11}role"
     )
     for c in m.cases:
         g = c.geometry
         size = (
             f"{g.spacing_mm} mm"
             if g is not None and g.kind == "volume"
-            else (f"{g.microns_per_pixel} µm/px" if g else "-")
+            else (f"{g.microns_per_pixel:.3f} µm/px" if g else "-")
         )
         typer.echo(
-            f"{c.case_id:<20}{c.modality.value:<12}{'yes' if c.label_key else 'no':<7}{str(c.shape):<18}{size:<22}{'yes' if c.synthetic else 'no'}"
+            f"{c.case_id:<32}{c.modality.value:<24}{'yes' if c.label_key else 'no':<7}{str(c.shape):<16}"
+            f"{size:<16}{'yes' if c.synthetic else 'no':<11}{c.tags.get('dataset_role', '-')}"
         )
 
 

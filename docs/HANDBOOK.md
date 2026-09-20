@@ -2,7 +2,7 @@
 
 # The ImagingAgent Handbook — from day 0 to the finished product
 
-**Handbook version:** 0.3 · **Last updated:** 2026-09-16 · **Repository state it describes:** Phases 0, 0b, 0c built; Phase 1 in progress (part a — manifest and mri ingestion — built; part b — pathology ingestion — next).
+**Handbook version:** 0.4 · **Last updated:** 2026-09-19 · **Repository state it describes:** Phases 0, 0b, 0c built; Phase 1 parts a and b built (both tracks ingest); part c — the Phase 1 tutorial — next.
 
 **This is the one document to read first and to come back to.** It walks
 the whole journey — understanding the project, setting up a blank machine,
@@ -43,7 +43,7 @@ flowchart LR
 | 2 | Put the code under version control | 30 min | ✅ guide exists |
 | 3 | Walk through the skeleton (Phase 0) | 1.5 h | ✅ built |
 | 4 | Two-track refactor (Phase 0c) | 1.5–2 h | ✅ built |
-| 5 | Ingestion (Phase 1) | 2–3 h + downloads | 🔧 in progress — mri done, pathology next |
+| 5 | Ingestion (Phase 1) | 2–3 h + downloads | 🔧 code built for both tracks; tutorial next |
 | 6 | Preprocessing (Phase 2) | 2 h | ⏳ |
 | 7 | Segmentation (Phase 3) → **v0.1.0** | 3–4 h | ⏳ |
 | 8 | Uncertainty & repeatability (Phase 4, mri) | 2–3 h | ⏳ |
@@ -207,16 +207,29 @@ DICOM headers into `VolumeGeometry`; the synthetic volume generator
 (`tracks/mri/synth.py`) including a synthetic DICOM series for tests;
 `scripts/download_msd_hippocampus.py` with checksum recording;
 `imagingagent ingest --track mri` and `imagingagent manifest --track mri`;
-`requirements-mri.txt`; a second CI job installing the track extras; 12
-new tests (65 total). **Next (part b):** the pathology readers, five
-dataset downloads and three synthetic generators.
+`requirements-mri.txt`; a second CI job installing the track extras.
+
+**Built (part b):** the pathology track's readers (`tracks/pathology/io.py`
+— TIFF/PNG tiles, DeepLIIF six-panel composites, OME-TIFF with channel
+names and pixel size, PanNuke tiles, Visium `.h5ad`); three synthetic
+generators (`tracks/pathology/synth.py` — H&E tiles with drawn nuclei and
+tissue classes, multi-channel fluorescence written as OME-TIFF and as a
+DeepLIIF-style composite, a Visium-like spot matrix); ingestion for five
+dataset roles with real-data-wins-over-synthetic per role
+(`tracks/pathology/ingest.py`); the PanNuke extractor
+(`tracks/pathology/pannuke.py`); five download scripts on one shared
+helper (`scripts/_download.py`: resume, checksums, extraction, publisher
+MD5 where published); `requirements-pathology.txt`; CI installs both
+tracks; 77 tests. **Next (part c):** the tutorial `01-ingestion.md` and
+its figure.
 
 Try it now — no download needed:
 
 ```bash
-python -m pip install -r requirements-mri.txt
+python -m pip install -r requirements-mri.txt -r requirements-pathology.txt
 imagingagent ingest --track mri --synthetic --limit 5
-imagingagent manifest --track mri
+imagingagent ingest --track pathology --synthetic --limit 8
+imagingagent manifest --track pathology
 ```
 
 **Why.** Everything downstream is arithmetic on pixels multiplied by

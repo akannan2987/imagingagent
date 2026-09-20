@@ -224,6 +224,20 @@ spots (each ~55 µm, covering a few cells) laid over a matching H&E image.
 **Spot** — one measurement location on a Visium slide. *One weather
 station on the map.*
 
+**Parquet** — a compact file format for tables; the PanNuke mirror stores
+each fold as one Parquet table whose cells hold PNG images. *A zip file
+for spreadsheets.*
+
+**Composite (DeepLIIF)** — several aligned images of the same tissue
+stored side by side in one wide picture: IHC, hematoxylin, DAPI, LAP2β,
+marker, mask. *A film strip of the same frame in different lighting.*
+
+**Cycle (CyCIF)** — one round of staining, imaging and bleaching in
+cyclic immunofluorescence; MCMICRO's exemplar has three cycles of four
+channels. Tiles from different cycles must be **registered** before their
+channels can be compared. *Three photographs of the same room taken on
+three days, to be laid over each other.*
+
 **Colour deconvolution** — separating a stained image into its component
 stains (e.g. haematoxylin and eosin, or haematoxylin and DAB) as if
 un-mixing the inks. *Separating a purple mixture back into blue and red
