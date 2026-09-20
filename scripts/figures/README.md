@@ -22,6 +22,7 @@ data (later phases) is regenerated from the run that produced the numbers.
 | `setup_flow.py` | `docs/img/setup_flow.svg` | the three setup guides |
 | `datasets_map.py` | `docs/img/datasets_map.svg` | `08-data-and-models.md` |
 | `two_track_config.py` | `docs/img/two_track_config.svg` | Phase 0c tutorial |
+| `ingestion_flow.py` | `docs/img/ingestion_flow.svg` | Phase 1 tutorial, Handbook |
 
 Each script writes with `newline="\n"` so the SVG is byte-identical on every
 operating system.

@@ -101,8 +101,15 @@ All notable changes to ImagingAgent are recorded here. The format follows
   h5py, pandas — pinned to versions with Intel-macOS wheels); CI installs
   both tracks and smoke-tests pathology ingestion; 12 new tests (77 total).
 
+### Added — Phase 1c: the ingestion tutorial
+- `docs/04-phase-tutorials/01-ingestion.md`: why ingestion is its own stage;
+  both tracks by hand (every reader, where each pixel size comes from, LPS
+  vs RAS); every download with expected output and its checksum record;
+  provenance; checkpoint and troubleshooting.
+- `scripts/figures/ingestion_flow.py` → `docs/img/ingestion_flow.svg`.
+- Handbook Stage 5 closed (v0.5); roadmap, README and architecture updated.
+
 ### Planned for 0.1.0 (end of Phase 3)
-- Phase 1c: the Phase 1 tutorial (`docs/04-phase-tutorials/01-ingestion.md`).
 - Phase 2: preprocessing for both tracks.
 - Phase 3: segmentation for both tracks — classical, learned, imported.
 

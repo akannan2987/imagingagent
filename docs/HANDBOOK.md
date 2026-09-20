@@ -2,7 +2,7 @@
 
 # The ImagingAgent Handbook — from day 0 to the finished product
 
-**Handbook version:** 0.4 · **Last updated:** 2026-09-19 · **Repository state it describes:** Phases 0, 0b, 0c built; Phase 1 parts a and b built (both tracks ingest); part c — the Phase 1 tutorial — next.
+**Handbook version:** 0.5 · **Last updated:** 2026-09-20 · **Repository state it describes:** Phases 0, 0b, 0c and 1 built (both tracks ingest, with tutorial); Phase 2 (preprocessing) next.
 
 **This is the one document to read first and to come back to.** It walks
 the whole journey — understanding the project, setting up a blank machine,
@@ -43,8 +43,8 @@ flowchart LR
 | 2 | Put the code under version control | 30 min | ✅ guide exists |
 | 3 | Walk through the skeleton (Phase 0) | 1.5 h | ✅ built |
 | 4 | Two-track refactor (Phase 0c) | 1.5–2 h | ✅ built |
-| 5 | Ingestion (Phase 1) | 2–3 h + downloads | 🔧 code built for both tracks; tutorial next |
-| 6 | Preprocessing (Phase 2) | 2 h | ⏳ |
+| 5 | Ingestion (Phase 1) | 2–3 h + optional downloads | ✅ built |
+| 6 | Preprocessing (Phase 2) | 2 h | ⏳ next |
 | 7 | Segmentation (Phase 3) → **v0.1.0** | 3–4 h | ⏳ |
 | 8 | Uncertainty & repeatability (Phase 4, mri) | 2–3 h | ⏳ |
 | 9 | Features & biomarkers (Phase 5) | 2 h | ⏳ |
@@ -192,13 +192,16 @@ shows implemented and planned modalities; `pytest` → `53 passed`.
 
 ---
 
-## Stage 5 — Ingestion (Phase 1) 🔧
+## Stage 5 — Ingestion (Phase 1) ✅
 
-**What.** Follow `04-phase-tutorials/01-ingestion.md` *(arrives with part c
-of this phase; parts a and b build the code)*. Download the public datasets
+**What.** Follow [`04-phase-tutorials/01-ingestion.md`](04-phase-tutorials/01-ingestion.md).
+Generate the synthetic stand-ins (no download), read each kind of image by
+hand and see where its geometry comes from, build the manifest for both
+tracks — and, when you choose, download the public datasets
 ([`08-data-and-models.md`](08-data-and-models.md) lists every one with
-size, licence and command) or generate the synthetic stand-ins; read them
-with their geometry; build the case manifest.
+size, licence and command) with checksums recorded beside them.
+
+![Ingestion flow](img/ingestion_flow.svg)
 
 **Built so far (part a):** the shared **manifest** (`manifest.py` — the
 pipeline's shopping list, one JSON file per track); the mri track's NIfTI
@@ -220,8 +223,8 @@ dataset roles with real-data-wins-over-synthetic per role
 (`tracks/pathology/pannuke.py`); five download scripts on one shared
 helper (`scripts/_download.py`: resume, checksums, extraction, publisher
 MD5 where published); `requirements-pathology.txt`; CI installs both
-tracks; 77 tests. **Next (part c):** the tutorial `01-ingestion.md` and
-its figure.
+tracks; 77 tests. **Part c:** the tutorial, the ingestion-flow figure,
+and this stage closed.
 
 Try it now — no download needed:
 
@@ -239,14 +242,17 @@ that no later check can see. This phase reads images *and* asserts their
 geometry in tests. The synthetic generators exist so every command runs
 with no download and tests take seconds.
 
-**Checkpoint.** `imagingagent ingest --track mri` and `--track pathology`
-each write a manifest; `imagingagent ingest --track mri --synthetic`
-works offline.
-**Commit message:** `phase-1: ingestion for both tracks — readers with geometry, downloads, synthetic generators, manifest`.
+**Checkpoint.** `imagingagent ingest --track mri --synthetic --limit 5` and
+`--track pathology --synthetic --limit 8` each write a manifest offline; the
+five pathology readers and both volume readers ran by hand; `pytest` → 77 passed.
+**Commit messages:** `phase-1a: …` (manifest, mri readers, MSD download),
+`phase-1b: …` (pathology readers, five downloads, synthetic generators),
+`phase-1c: …` (tutorial, figure, handbook closed). Measured hands-on time:
+about 2.5 hours without downloads.
 
 ---
 
-## Stage 6 — Preprocessing (Phase 2) ⏳
+## Stage 6 — Preprocessing (Phase 2) ⏳ next
 
 **What.** Follow `04-phase-tutorials/02-preprocessing.md`.
 

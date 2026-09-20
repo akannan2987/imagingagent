@@ -1,0 +1,97 @@
+"""Writes docs/img/ingestion_flow.svg — Phase 1: from files on disk to a manifest."""
+
+from _svg import write_svg
+
+SVG = r"""
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="13">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker>
+  </defs>
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">Phase 1 — Ingestion: every file becomes a case with its geometry, and every case goes on one list</text>
+
+  <!-- column headers -->
+  <g font-weight="700" font-size="14" fill="#334155" text-anchor="middle">
+    <text x="150" y="70">1 · Source</text>
+    <text x="440" y="70">2 · Reader (geometry kept)</text>
+    <text x="730" y="70">3 · CaseRecord</text>
+    <text x="1030" y="70">4 · Manifest + ledger</text>
+  </g>
+
+  <!-- MRI band -->
+  <rect x="30" y="85" width="1140" height="200" rx="14" fill="#eef4ff" stroke="#5b8def" stroke-width="2"/>
+  <text x="50" y="110" font-size="15" font-weight="700" fill="#2f5bb7">🧠 mri</text>
+  <g fill="#ffffff" stroke="#5b8def" stroke-width="1.5">
+    <rect x="50" y="125" width="200" height="60" rx="8"/><rect x="50" y="200" width="200" height="60" rx="8"/>
+    <rect x="330" y="125" width="220" height="60" rx="8"/><rect x="330" y="200" width="220" height="60" rx="8"/>
+    <rect x="620" y="140" width="220" height="110" rx="8"/>
+  </g>
+  <g fill="#1e293b">
+    <text x="60" y="148" font-weight="600">MSD hippocampus</text><text x="60" y="166" font-size="12">imagesTr/ · labelsTr/ · imagesTs/ (NIfTI)</text>
+    <text x="60" y="223" font-weight="600">synthetic volumes</text><text x="60" y="241" font-size="12">seeded ellipsoid + label; DICOM series for tests</text>
+    <text x="340" y="148" font-weight="600">read_nifti</text><text x="340" y="166" font-size="12">affine → spacing · orientation · origin</text>
+    <text x="340" y="223" font-weight="600">read_dicom_series</text><text x="340" y="241" font-size="12">sorted slices → LPS geometry (Phase 2 canonicalises)</text>
+    <text x="630" y="163" font-weight="600">track = mri · modality = MRI</text>
+    <text x="630" y="183" font-size="12">geometry: VolumeGeometry</text>
+    <text x="630" y="201" font-size="12">spacing_mm (1,1,1) · shape (36,50,36) · RAS</text>
+    <text x="630" y="219" font-size="12">image_key · label_key · synthetic</text>
+    <text x="630" y="240" font-size="12" fill="#2f5bb7">validator: track ↔ modality ↔ geometry agree</text>
+  </g>
+  <g stroke="#475569" stroke-width="2" marker-end="url(#a)">
+    <line x1="250" y1="155" x2="328" y2="155"/><line x1="250" y1="230" x2="328" y2="230"/>
+    <line x1="550" y1="155" x2="618" y2="180"/><line x1="550" y1="230" x2="618" y2="210"/>
+    <line x1="840" y1="195" x2="918" y2="195"/>
+  </g>
+  <rect x="920" y="140" width="230" height="110" rx="8" fill="#ffffff" stroke="#5b8def" stroke-width="1.5"/>
+  <text x="930" y="163" font-weight="600" fill="#1e293b">manifest_mri.json</text>
+  <text x="930" y="183" font-size="12" fill="#1e293b">data/processed/ · N cases</text>
+  <text x="930" y="203" font-size="12" fill="#1e293b">dataset · synthetic? · run_id</text>
+  <text x="930" y="230" font-size="12" fill="#166534">ledger: ingest · mri · started/finished</text>
+
+  <!-- Pathology band -->
+  <rect x="30" y="300" width="1140" height="260" rx="14" fill="#fdf0f5" stroke="#c2417b" stroke-width="2"/>
+  <text x="50" y="325" font-size="15" font-weight="700" fill="#9c2f62">🔬 pathology — five dataset roles, real data wins over synthetic role by role</text>
+  <g fill="#ffffff" stroke="#c2417b" stroke-width="1.5">
+    <rect x="50" y="340" width="200" height="40" rx="8"/><rect x="50" y="386" width="200" height="40" rx="8"/><rect x="50" y="432" width="200" height="40" rx="8"/><rect x="50" y="478" width="200" height="40" rx="8"/><rect x="50" y="524" width="200" height="30" rx="8"/>
+    <rect x="330" y="340" width="220" height="40" rx="8"/><rect x="330" y="386" width="220" height="40" rx="8"/><rect x="330" y="432" width="220" height="40" rx="8"/><rect x="330" y="478" width="220" height="40" rx="8"/><rect x="330" y="524" width="220" height="30" rx="8"/>
+    <rect x="620" y="370" width="220" height="150" rx="8"/>
+    <rect x="920" y="370" width="230" height="150" rx="8"/>
+  </g>
+  <g fill="#1e293b" font-size="12">
+    <text x="60" y="357" font-weight="600">tissue · Kather-2016</text><text x="60" y="373">.tif per class folder, 0.495 µm/px</text>
+    <text x="60" y="403" font-weight="600">nuclei · PanNuke (one fold)</text><text x="60" y="419">Parquet → extracted PNG + .npz</text>
+    <text x="60" y="449" font-weight="600">ihc · DeepLIIF (validation)</text><text x="60" y="465">six-panel composite PNG</text>
+    <text x="60" y="495" font-weight="600">mif · MCMICRO exemplar-001</text><text x="60" y="511">raw OME-TIFF per cycle + markers.csv</text>
+    <text x="60" y="544" font-weight="600">spatial · Visium (.h5ad)</text>
+    <text x="340" y="357" font-weight="600">read_rgb_tile</text><text x="340" y="373">µm/px from the dataset's documentation</text>
+    <text x="340" y="403" font-weight="600">read_pannuke_tile</text><text x="340" y="419">image + instance map + nucleus types</text>
+    <text x="340" y="449" font-weight="600">read_deepliif_composite</text><text x="340" y="465">splits IHC | Hematoxylin | DAPI | Lap2 | Marker | Seg</text>
+    <text x="340" y="495" font-weight="600">read_ome_tiff</text><text x="340" y="511">PhysicalSizeX + channel names from OME-XML</text>
+    <text x="340" y="544" font-weight="600">read_visium_h5ad</text>
+    <text x="630" y="393" font-weight="600" font-size="13">track = pathology</text>
+    <text x="630" y="413">modality = HE / IHC / MIF / SPATIAL_…</text>
+    <text x="630" y="433">geometry: TileGeometry</text>
+    <text x="630" y="451">µm/px · width × height · channels · stain</text>
+    <text x="630" y="471">tags: dataset_role, tissue_class,</text>
+    <text x="630" y="489">cycle, label_panel, licence …</text>
+    <text x="630" y="511" fill="#9c2f62">synthetic stand-in per role when absent</text>
+    <text x="930" y="393" font-weight="600" font-size="13">manifest_pathology.json</text>
+    <text x="930" y="413">roles: tissue, nuclei, ihc, mif, spatial</text>
+    <text x="930" y="433">dataset: kather2016,pannuke,… or synthetic:…</text>
+    <text x="930" y="453">each case: synthetic? role? label?</text>
+    <text x="930" y="480" fill="#166534">ledger: ingest · pathology · started/finished</text>
+    <text x="930" y="505" fill="#64748b">every later phase reads this list,</text>
+    <text x="930" y="520" fill="#64748b">never the folders again</text>
+  </g>
+  <g stroke="#475569" stroke-width="2" marker-end="url(#a)">
+    <line x1="250" y1="360" x2="328" y2="360"/><line x1="250" y1="406" x2="328" y2="406"/><line x1="250" y1="452" x2="328" y2="452"/><line x1="250" y1="498" x2="328" y2="498"/><line x1="250" y1="539" x2="328" y2="539"/>
+    <line x1="550" y1="360" x2="618" y2="410"/><line x1="550" y1="406" x2="618" y2="430"/><line x1="550" y1="452" x2="618" y2="450"/><line x1="550" y1="498" x2="618" y2="470"/><line x1="550" y1="539" x2="618" y2="490"/>
+    <line x1="840" y1="445" x2="918" y2="445"/>
+  </g>
+
+  <text x="600" y="598" text-anchor="middle" font-size="12" fill="#64748b">Downloads are scripts you run once (scripts/download_*.py); checksums are recorded beside the data; data/raw/ is never edited. Regenerate this figure: python scripts/figures/ingestion_flow.py</text>
+</svg>
+"""
+
+if __name__ == "__main__":
+    write_svg("ingestion_flow", SVG)
