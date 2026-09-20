@@ -100,6 +100,31 @@ QuPath: Groovy/Java; Napari: Python) with its own release cadence.
 **Verdict: Formats required now; plugins recommended later.** **Trigger:**
 the first user who asks for one — the format work makes each plugin thin.
 
+### A3b. Docs assistant — ask the product about itself
+
+**What it is.** A question box over the project's own documentation:
+"how do I install the mri extras?", "what is a voxel?", "why InstanSeg and
+not Cellpose?" — answered with the relevant passages and links to the
+exact sections, and, optionally, a short grounded answer written from
+those passages only. Questions outside the project are refused, not
+guessed. *Analogy:* a librarian who only lends books from this library and
+says so when you ask for one it does not have.
+**Required?** For a product this size, yes: a from-zero reader's most
+frequent question is "where is X?", and a product whose documentation
+doubles every few phases needs a way in that is not a table of contents.
+**Constraints.** Every answer cites its sources; a retrieval-confidence
+gate refuses out-of-scope questions *before* any language model runs; a
+golden set of in-scope and out-of-scope questions is enforced in
+continuous integration; the language-model backend is optional and
+switched on by environment variable, exactly as for the report writer.
+**Benefit / cost.** Immediate, honest answers with links; the same engine
+later serves the review interface and an `ask_docs` MCP tool. / A
+retrieval index rebuilt at each release; a golden set to maintain.
+**Verdict: Required — level 1 (find and quote) after v0.1.0 (Phase 3b);
+level 2 (grounded answers) with a provider; level 3 (chat panel, MCP tool)
+in Phase 11.** **Trigger for a fully offline level 2:** a user without a
+provider account who needs written answers, at the cost of a local model.
+
 ### A4. Desktop or mobile packaging, app-store distribution
 
 **What it is.** Wrapping the software as an installer or a phone app.
@@ -220,8 +245,10 @@ switched on by environment variable.
 ### C2. Retrieval over reports and literature (RAG)
 
 **What it is.** Letting the report writer or an agent look things up in
-past reports and cited papers before answering. *Analogy:* an open-book
-exam instead of a closed-book one.
+past reports and cited papers before answering — the same retrieval
+engine the docs assistant (A3b) uses over documentation, pointed at run
+outputs and literature instead. *Analogy:* an open-book exam instead of a
+closed-book one.
 **Required?** No — there are no past reports yet.
 **Verdict: Recommended later.** **Trigger:** a corpus of a few hundred
 reports, or a request such as "what did we find on similar cases?"
@@ -401,7 +428,7 @@ For orientation only; there is no product to sell yet.
 | **Segment or import** | own models or imported masks, on CPU or GPU, scheduled | segmentation and report contracts | Phase 3, D3, B5 |
 | **Audit** | reference-free trust scores and a review queue with a budget | `AuditReport`, `Finding`, `Verdict` contracts | Phase 9 |
 | **Report** | grounded per-case reports; benchmark reports; ontology-coded findings | contracts publish JSON Schema | Phases 10–11, C5 |
-| **Serve** | web front end, HTTP API, MCP server, integrations | CLI as thin skin over functions | Phase 11 (MCP, Streamlit), A1/A2 (web), A3 (plugins) |
+| **Serve** | web front end, HTTP API, MCP server, docs assistant, integrations | CLI as thin skin over functions | Phase 3b (docs assistant), Phase 11 (MCP, Streamlit, `ask_docs`), A1/A2 (web), A3 (plugins) |
 | **Operate** | containers, monitoring, cost, audit log, backups | run ledger, 3-OS CI | Phase 12 (container), D5, B2 |
 
 The foundation column is what makes the "arrives with" column a list of
@@ -409,7 +436,7 @@ additions. Nothing in it needs to be rewritten to reach the last column.
 
 ## Sequencing summary
 
-1. **This repository (Phases 0–12):** everything marked *Required now*.
+1. **This repository (Phases 0–12, plus 3b):** everything marked *Required now*, including the docs assistant.
 2. **First hosted deployment:** B1 object storage → B2 PostgreSQL → A2
    HTTP API → A1 web front end → D5 monitoring → D4 CD.
 3. **Scale and integration:** B5 orchestrator → A3 plugins → C5 ontologies

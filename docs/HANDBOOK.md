@@ -2,7 +2,7 @@
 
 # The ImagingAgent Handbook — from day 0 to the finished product
 
-**Handbook version:** 0.5 · **Last updated:** 2026-09-20 · **Repository state it describes:** Phases 0, 0b, 0c and 1 built (both tracks ingest, with tutorial); Phase 2 (preprocessing) next.
+**Handbook version:** 0.6 · **Last updated:** 2026-09-20 · **Repository state it describes:** Phases 0, 0b, 0c and 1 built (both tracks ingest, with tutorial); Phase 2 (preprocessing) next.
 
 **This is the one document to read first and to come back to.** It walks
 the whole journey — understanding the project, setting up a blank machine,
@@ -46,6 +46,7 @@ flowchart LR
 | 5 | Ingestion (Phase 1) | 2–3 h + optional downloads | ✅ built |
 | 6 | Preprocessing (Phase 2) | 2 h | ⏳ next |
 | 7 | Segmentation (Phase 3) → **v0.1.0** | 3–4 h | ⏳ |
+| 7b | Docs assistant (Phase 3b) — ask the project about itself | 2 h | ⏳ |
 | 8 | Uncertainty & repeatability (Phase 4, mri) | 2–3 h | ⏳ |
 | 9 | Features & biomarkers (Phase 5) | 2 h | ⏳ |
 | 10 | Foundation-model benchmark (Phase 6, pathology) | 2–3 h | ⏳ |
@@ -288,6 +289,32 @@ steps in [`03-git-workflow.md`](03-git-workflow.md) Part C for `v0.1.0`
 
 ---
 
+## Stage 7b — Docs assistant (Phase 3b) ⏳
+
+**What.** Follow `04-phase-tutorials/03b-docs-assistant.md`. Build
+`imagingagent ask "<question>"`: an index over every document in this
+repository, retrieval of the most relevant passages returned verbatim with
+links to their file and heading, a confidence gate that refuses questions
+outside the project, an optional grounded answer through a language-model
+provider (switched on by environment variable), and a golden question set
+— in-scope and out-of-scope — enforced in continuous integration.
+
+**Why.** By this stage the documentation covers a complete path from a
+blank laptop to a segmented case, and it will double again. A reader's
+most frequent question is "where is X?"; the assistant answers it with
+the passage and the link, immediately, and says plainly when a question
+is not about this project rather than inventing something. The provider
+layer built here is reused by the report writer and the review interface
+in Stage 15, where the same engine becomes a chat panel and an `ask_docs`
+tool for agents.
+
+**Checkpoint.** `imagingagent ask "what is a voxel?"` returns the glossary
+passage with its link; `imagingagent ask "what is the capital of France?"`
+returns the out-of-scope refusal; the golden set passes in `pytest`.
+**Commit message:** `phase-3b: docs assistant — retrieval over the documentation with citations and an out-of-scope gate`.
+
+---
+
 ## Stage 8 — Uncertainty & repeatability (Phase 4, mri) ⏳
 
 **What.** Follow `04-phase-tutorials/04-uncertainty-repeatability.md`.
@@ -458,7 +485,7 @@ Then the end-of-phase ritual (Stage 2) when a stage is complete.
 | a command is "not found" | your setup guide, Step 6 (activate `.venv`) |
 | a test fails | the phase tutorial's *What could go wrong* table, then the Actions log on GitHub |
 | CI is red but local is green | [`03-git-workflow.md`](03-git-workflow.md) and the Windows-newline story in the Phase 0 tutorial — reproduce the red step locally first |
-| a word you don't know | [`00-glossary.md`](00-glossary.md) |
+| a word you don't know | [`00-glossary.md`](00-glossary.md) — and, from Stage 7b, `imagingagent ask "what is …?"` |
 | a dataset will not download | [`08-data-and-models.md`](08-data-and-models.md) — use the synthetic fallback and continue |
 | a `--track` command refuses | the track is disabled in your config; `imagingagent tracks` shows which |
 | a figure looks wrong or is missing | `python scripts/figures/all.py` regenerates every one |

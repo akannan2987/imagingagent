@@ -35,6 +35,7 @@ budget is wall-clock on an Intel laptop without a GPU, excluding downloads.
 | 1 | Ingestion | MSD download + synthetic volumes (+ DICOM series); NIfTI + DICOM readers | Kather-2016, PanNuke fold, DeepLIIF validation set, MCMICRO exemplar-001, Visium sample; synthetic H&E / mIF / spot generators; TIFF, OME-TIFF, PNG, Parquet, h5ad readers (SVS via openslide-bin deferred to the first real slide) | case manifest; shared download helper with checksums; offline runs; tutorial | < 1 min synthetic (measured) | ✅ | — |
 | 2 | Preprocessing | resample, normalise, denoise, rigid register, paired transforms | colour deconvolution, Macenko, stain augmentation, tissue mask, tiling; cycle-to-cycle registration of MCMICRO tiles (reusing the mri registration) | augmentation as robustness tool | < 5 min | ⏳ next | — |
 | 3 | Segmentation | classical; 3D U-Net (≈ 10–15 min training); Dice / HD95 / NSD; import label maps | classical; InstanSeg; Dice / AJI / PQ; import label maps and QuPath GeoJSON | one segmentation contract; per-case failure lists | ≈ 20 min | ⏳ | **v0.1.0** |
+| 3b | Docs assistant *(shared)* | — | — | `imagingagent ask`: retrieval over README, Handbook, glossary, architecture, tutorials, ADRs, roadmaps and docstrings; passages returned verbatim with file + heading links; a confidence gate that refuses questions outside the project instead of guessing; optional grounded answers through the language-model provider layer (pulled forward from Phase 11); a golden question set (in-scope and out-of-scope) enforced in CI | < 1 min | ⏳ | — |
 | 4 | Uncertainty & repeatability *(mri)* | TTA, MC-dropout, calibration; perturbation study → minimum detectable difference | — | — | ≈ 15 min | ⏳ | — |
 | 5 | Features & biomarkers | volume, shape, CIs | morphology, intensity, texture; nucleus-type classifier; IHC/mIF positivity; density and composition, CIs | one tabular biomarker contract | < 5 min | ⏳ | — |
 | 6 | Foundation-model benchmark *(pathology)* | — | Phikon vs DINOv2-small vs ResNet-50 vs PLIP zero-shot; linear probe + k-NN on a documented 1,600-tile subset (full 5,000 optional); stain-shift robustness; calibration | embedding contract | ≈ 15 min | ⏳ | — |
@@ -49,7 +50,11 @@ budget is wall-clock on an Intel laptop without a GPU, excluding downloads.
 platform is usable end to end early (v0.1.0 after segmentation) and the
 shared audit layer (Phase 9) has real signals from both tracks to learn
 from. The modality-specific phases (4, 6, 7) sit between segmentation and
-audit because the audit consumes their outputs.
+audit because the audit consumes their outputs. The docs assistant (3b)
+follows v0.1.0 because that is the first point at which the documentation
+covers a complete path (setup → ingest → preprocess → segment), so its
+golden question set can be realistic — and building it then gives Phase 11
+the provider layer ready-made.
 
 ## Deferred items and their triggers
 
@@ -86,7 +91,9 @@ Symmetric by design: each track lists the same categories.
 
 | Item | Status | Trigger / approach |
 |---|---|---|
-| Language-model backend for the report writer | ⏳ Phase 11 | template backend ships by default; an HTTP backend is configured by environment variable and never sees images |
+| Language-model backend for the report writer | ⏳ Phase 11 | template backend ships by default; an HTTP backend is configured by environment variable and never sees images; the provider layer itself arrives with Phase 3b |
+| Docs assistant, level 3: chat panel and `ask_docs` MCP tool | ⏳ Phase 11 | the Phase 3b engine behind the review interface and the MCP server, so people and agents can ask the project about itself |
+| Docs assistant, fully offline grounded answers (small local model) | 🔒 | trigger: a user who needs level-2 answers with no provider account; adds a local-model dependency and CPU cost — level 1 (find-and-quote) is already fully offline |
 | Retrieval over past reports and literature | 🔒 | needs a corpus of reports first |
 | Knowledge graph and ontologies (SNOMED CT, RadLex, Cell Ontology, UBERON) | 🔒 | findings are already structured; coding them is product roadmap |
 | Object storage backend | 🔒 | first real slide cohort; the interface exists |

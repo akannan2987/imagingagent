@@ -414,6 +414,25 @@ on new ones. *Memorising last year's exam answers.*
 training, where its predictions cannot be trusted. *Asking a French teacher
 to grade a Japanese essay.*
 
+**Retrieval** — finding the passages of a document collection most
+relevant to a question, by matching words or by comparing embeddings.
+*Asking the librarian, who hands you the right pages rather than reciting
+from memory.*
+
+**Grounded answer** — an answer written only from retrieved passages, each
+sentence traceable to one, with the sources cited. *An open-book exam
+where you must quote the page.*
+
+**Hallucination** — a language model stating something fluent and false
+because nothing stopped it. The docs assistant prevents it by refusing
+questions that retrieve nothing relevant, before any model runs.
+*A confident tour guide describing a room that is not in the building.*
+
+**Docs assistant** — this project's question box over its own
+documentation: `imagingagent ask "…"` returns passages and links, refuses
+out-of-scope questions, and optionally writes a grounded answer. *A
+librarian for one library.*
+
 **Agent** — a program that uses a language model to decide *which* tools to
 call and in what order to complete a task, rather than only answering a
 question. *A capable assistant who can open the filing cabinet and run the

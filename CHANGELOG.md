@@ -109,6 +109,14 @@ All notable changes to ImagingAgent are recorded here. The format follows
 - `scripts/figures/ingestion_flow.py` → `docs/img/ingestion_flow.svg`.
 - Handbook Stage 5 closed (v0.5); roadmap, README and architecture updated.
 
+### Changed — plan
+- A docs assistant (`imagingagent ask`) is added to the plan as Phase 3b,
+  after v0.1.0: retrieval over the documentation with citations, an
+  out-of-scope gate, an optional grounded-answer provider layer reused by
+  Phase 11, and a golden question set in CI. Recorded in the Handbook
+  (Stage 7b), the repository roadmap, the product roadmap (A3b) and the
+  glossary.
+
 ### Planned for 0.1.0 (end of Phase 3)
 - Phase 2: preprocessing for both tracks.
 - Phase 3: segmentation for both tracks — classical, learned, imported.
