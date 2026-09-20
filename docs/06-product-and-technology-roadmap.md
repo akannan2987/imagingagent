@@ -117,6 +117,18 @@ gate refuses out-of-scope questions *before* any language model runs; a
 golden set of in-scope and out-of-scope questions is enforced in
 continuous integration; the language-model backend is optional and
 switched on by environment variable, exactly as for the report writer.
+**Which model.** None is required: the default backend returns passages
+and links. For written answers the provider layer offers a *local*
+backend — an open model (3–8 B parameters) served on the user's own
+machine by Ollama on Windows, macOS and Linux, so nothing leaves the
+laptop — and a *hosted* backend for any provider with an OpenAI-compatible
+HTTP interface, which covers the major commercial models. Both speak the
+same interface, so one implementation serves both; the user picks with an
+endpoint and a model name. Only documentation text is ever sent.
+**Never an empty box.** A curated starter list (`docs/ask/starter_questions.md`)
+is shown when nothing has been asked, and "you might also ask" suggestions
+are generated from the headings of the documents most related to the last
+question, so suggestions grow with the documentation.
 **Benefit / cost.** Immediate, honest answers with links; the same engine
 later serves the review interface and an `ask_docs` MCP tool. / A
 retrieval index rebuilt at each release; a golden set to maintain.

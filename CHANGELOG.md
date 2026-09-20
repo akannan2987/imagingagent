@@ -115,7 +115,9 @@ All notable changes to ImagingAgent are recorded here. The format follows
   out-of-scope gate, an optional grounded-answer provider layer reused by
   Phase 11, and a golden question set in CI. Recorded in the Handbook
   (Stage 7b), the repository roadmap, the product roadmap (A3b) and the
-  glossary.
+  glossary. Provider choice recorded: none (default), local via Ollama,
+  or hosted via an OpenAI-compatible interface; starter questions and
+  index-generated suggestions so the box is never empty.
 
 ### Planned for 0.1.0 (end of Phase 3)
 - Phase 2: preprocessing for both tracks.

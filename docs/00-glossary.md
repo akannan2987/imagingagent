@@ -430,8 +430,20 @@ questions that retrieve nothing relevant, before any model runs.
 
 **Docs assistant** — this project's question box over its own
 documentation: `imagingagent ask "…"` returns passages and links, refuses
-out-of-scope questions, and optionally writes a grounded answer. *A
-librarian for one library.*
+out-of-scope questions, suggests what to ask next, and optionally writes a
+grounded answer. *A librarian for one library.*
+
+**Language-model provider** — the small interface through which the
+project sends text to a language model and gets text back, with
+interchangeable backends: none (template), local (an open model served on
+your own machine by Ollama), or hosted (any provider with an
+OpenAI-compatible HTTP interface). *A power socket: the appliance does not
+care which power station.*
+
+**Ollama** — a free program for Windows, macOS and Linux that downloads
+and runs open language models on your own computer and exposes them
+through the same HTTP interface hosted providers use. *A record player for
+models.*
 
 **Agent** — a program that uses a language model to decide *which* tools to
 call and in what order to complete a task, rather than only answering a

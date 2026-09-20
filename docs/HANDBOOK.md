@@ -296,8 +296,12 @@ steps in [`03-git-workflow.md`](03-git-workflow.md) Part C for `v0.1.0`
 repository, retrieval of the most relevant passages returned verbatim with
 links to their file and heading, a confidence gate that refuses questions
 outside the project, an optional grounded answer through a language-model
-provider (switched on by environment variable), and a golden question set
-— in-scope and out-of-scope — enforced in continuous integration.
+provider (switched on by environment variable — a local open model served
+by Ollama for fully offline use, or any hosted provider with an
+OpenAI-compatible interface), starter questions when the box is empty and
+"you might also ask" suggestions drawn from the index, and a golden
+question set — in-scope and out-of-scope — enforced in continuous
+integration.
 
 **Why.** By this stage the documentation covers a complete path from a
 blank laptop to a segmented case, and it will double again. A reader's
@@ -308,9 +312,12 @@ layer built here is reused by the report writer and the review interface
 in Stage 15, where the same engine becomes a chat panel and an `ask_docs`
 tool for agents.
 
-**Checkpoint.** `imagingagent ask "what is a voxel?"` returns the glossary
-passage with its link; `imagingagent ask "what is the capital of France?"`
-returns the out-of-scope refusal; the golden set passes in `pytest`.
+**Checkpoint.** `imagingagent ask` with no question prints the starter
+list; `imagingagent ask "what is a voxel?"` returns the glossary passage
+with its link and three related questions; `imagingagent ask "what is the
+capital of France?"` returns the out-of-scope refusal; the golden set
+passes in `pytest`; with a local model configured, the same question
+yields a two-sentence grounded answer citing the glossary.
 **Commit message:** `phase-3b: docs assistant — retrieval over the documentation with citations and an out-of-scope gate`.
 
 ---
